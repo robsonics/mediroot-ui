@@ -1,0 +1,77 @@
+﻿<div id="wrapper">
+
+    <!-- Navigation -->
+    <div ng-include="'menu.html'" />
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3 class="page-header"><a href="#/schedule">Kalendarz</a>::Nowa Wizyta</h3>
+                    <!--ng-hide="dataLoading"-->
+                    <div >
+                        <div class="row">
+                            <div class="form-group col-md-6" >
+                                <label for="doctor">Doktor</label>
+                                <div angucomplete-alt id="doctor"  pause="50"
+                                     placeholder ="Szukaj lekarza" 
+                                     selected-object="newDoctor" local-data="doctors" 
+                                     search-fields="name,description,id" title-field="name" 
+                                     description-field="description" minlength="1" input-class="form-control form-control-small" match-class="highlight">
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-3" >
+                                <label for="pacjent">Pacjent</label>
+                                <angucomplete-alt id="pacjent"
+                                                  pause="100"
+                                                  minlength="2"
+                                                  override-suggestions="true"
+                                                  placeholder="Szukaj pacjenta"
+                                                  selected-object="newPatient"
+                                                  remote-url="/patient/search/"
+                                                  title-field="name"
+                                                  description-field="pesel"
+                                                  input-class="form-control form-control-small" />
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label for="phone">Telefon</label>
+                                <input type="text" name="phone" id="phone" class="form-control" ng-model="phone" />
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <button type="submit" ng-disabled="valid" class="btn btn-success" ng-click="save()">
+                                    <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Wyślij
+                                </button>
+                            </div>
+                            </div>
+                        <div class="btn-group">
+                            <button class="btn btn-success" ng-click="changeView('agendaDay' )">Widok Dnia</button>
+                            <button class="btn btn-success" ng-click="changeView('agendaWeek')">Widok Tygodnia</button>
+                            <button class="btn btn-success" ng-click="changeView('month')">Widok Miesiąca</button>
+                        </div>
+                        <!--ng-hide="doctorLoading"-->
+                        <div >
+                            <div class="calendar" ng-model="eventSources" calendar="myCalendar1" ui-calendar="uiConfig.calendar"></div>                           
+                        </div>
+                        <div>
+                            Wybrana data: <span ng-bind="selectedDate"></span>
+                        </div>
+                        <!--<div ng-show="doctorLoading">
+                             <h3>Trwa pobieranie listy wizyt..</h3>
+                             <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                
+                        </div>-->
+                    </div>
+                    <!--<div ng-show="dataLoading">
+                        <h3>Trwa pobieranie danych..</h3>
+                        <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

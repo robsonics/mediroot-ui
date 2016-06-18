@@ -1,0 +1,180 @@
+﻿<div id="wrapper">
+
+    <!-- Navigation -->
+    <div ng-include="'menu.html'" />
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="page-header" ng-hide="isEdit">Zaplanuj swoją obecność</h2>
+                    <h2 class="page-header" ng-show="isEdit">Edytuj swoją obecność</h2>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="title">Tytuł</label>
+                            <input type="text" name="title" id="title" class="form-control" ng-model="title" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="input-group">
+                                <input type="text" class="form-control" datepicker-popup ng-model="startDate" is-open="status.opened" datepicker-options="dateOptions" close-text="Zamknij" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-3">
+                            OD:
+                            <uib-timepicker ng-model="startTime" hour-step="1" minute-step="15" show-meridian="false"></uib-timepicker>
+                        </div>
+                        <div class="col-md-3">
+                            DO:
+                            <uib-timepicker ng-model="endTime" hour-step="1" minute-step="15" show-meridian="false"></uib-timepicker>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="isRepeating">
+                                    Powtarzające się
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-show="isRepeating">
+                        <div class="row">
+                            <div class="form-group col-md-5">
+                                <label for="repeate">Powtarzanie:</label>
+                                <select id="repeate" ng-model="repeateType" ng-options="item.id as item.name for item in repeateTypes" />
+                            </div>
+                        </div>
+                        <!--codziennie-->
+                        <div class="row" ng-show="repeateType==1 || repeateType==3 || repeateType==4">
+                            <div class="form-group col-md-5">
+                                <label for="question">Powtarzaj co:</label>
+                                <select ng-model="repateBy" ng-options="item.id as item.name for item in repeateBys" />
+                            </div>
+                        </div>
+                        <!--co tydzien-->
+                        <div class="row" ng-show="repeateType==3">
+                            <div class="form-group col-md-1">
+                                <label>
+                                    <input type="checkbox" ng-model="weekRepeateMonday">
+                                    P
+                                </label>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label>
+                                    <input type="checkbox" ng-model="weekRepeateTuesday">
+                                    W
+                                </label>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label>
+                                    <input type="checkbox" ng-model="weekRepeateWednesday">
+                                    Ś
+                                </label>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label>
+                                    <input type="checkbox" ng-model="weekRepeateThursday">
+                                    C
+                                </label>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label>
+                                    <input type="checkbox" ng-model="weekRepeateFriday">
+                                    P
+                                </label>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label>
+                                    <input type="checkbox" ng-model="weekRepeateSaturday">
+                                    S
+                                </label>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label>
+                                    <input type="checkbox" ng-model="weekRepeateSunday">
+                                    N
+                                </label>
+                            </div>
+                        </div>
+                        <!--co miesiac-->
+                        <div class="row" ng-show="repeateType==4">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="0" checked ng-model="repeatAccording">
+                                    Powtarzaj według dnia miesiąca
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="1" ng-model="repeatAccording">
+                                    Powtarzaj według dnia tygodnia
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                Koniec:
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios2" value="0" checked ng-model="endType">
+                                        Nigdy
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios2" value="1" checked ng-model="endType">
+                                        Po Wystąpieniu:
+                                        <br>
+                                        <input type="number" ng-model="finishafterrepeate" ng-show="endType==1">
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios2" value="2" checked ng-model="endType">
+                                        Po Dniu:<br>
+                                        <input type="text" class="form-control" datepicker-popup ng-model="finishafterdate" datepicker-options="dateOptions" close-text="Zamknij" ng-show="endType==2" />
+
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="comment">Komentarz</label>
+                                <textarea name="comment" id="comment" class="form-control" ng-model="comment" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1 col-md-offset-8">
+                            <button ng-click="Save()" ng-disabled="dataLoading" class="btn btn-primary">
+                                <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Zapisz
+                            </button>
+                            <img ng-if="dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                        </div>
+                        <div class="col-md-1" ng-show="isEdit">
+                            <button ng-click="Remove()" ng-disabled="dataLoading" class="btn btn-danger">
+                                <span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span>Usuń
+                            </button>
+                        </div>
+                    </div>
+
+                    <!--</load-data>-->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>

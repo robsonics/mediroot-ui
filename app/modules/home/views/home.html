@@ -1,0 +1,63 @@
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <div ng-include="'menu.html'" />
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Pacjenci</h1>
+                    <div ng-hide="dataLoading">
+                        <p>
+                            <input type="text" ng-model="nameFilter" placeholder="Szukaj..." />
+                            <button class="btn btn-primary" ng-click="addPatient()">
+                                <span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>Dodaj pacjenta
+                            </button>
+                        </p>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Lp </th>
+                                    <th>Nazwisko Imie</th>
+                                    <th>PESEL</th>
+                                    <th>Telefon</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="patient in driversList | filter: nameFilter">
+                                    <td>{{$index + 1}}</td>
+                                    <td>
+                                        <a href="#/patient/{{patient.patientid}}/visit" style="text-transform: capitalize">{{patient.lastname}}&nbsp;{{patient.firstname}}</a>
+                                    </td>
+                                    <td>{{patient.pesel}}</td>
+                                    <td>{{patient.phone}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-xs" aria-label="Left Align" popover-placement="bottom" popover="Edytuj dane pacjenta" popover-trigger="mouseenter" ng-click="editPatient($index)">
+                                            <span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-xs" aria-label="Left Align" popover-placement="bottom" popover="Usuñ pacjenta" popover-trigger="mouseenter" ng-click="removePatient($index)">
+                                            <span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div ng-show="dataLoading">
+                        <h3>Trwa pobieranie danych..</h3>
+                        <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                    </div>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>

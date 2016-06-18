@@ -1,0 +1,12 @@
+{
+    "jscodehints.detectedExclusions": [
+        "/home/robert/angularJs/angular-seed-master_cros_static/app/modules/pricing/pricingControllers.js",
+        "/home/robert/angularJs/angular-seed-master_cros_static/app/modules/authentication/controllers.js",
+        "/home/robert/angularJs/angular-seed-master_cros_static/app/bower_components/bootstrap/js/collapse.js",
+        "/home/robert/angularJs/angular-seed-master_cros_static/app/bower_components/datatables-responsive/js/dataTables.responsive.js",
+        "/home/robert/angularJs/angular-seed-master_cros_static/app/bower_components/angular-loader/angular-loader.min.js",
+        "/home/robert/angularJs/angular-seed-master_cros_static/app/modules/common/commonService.js",
+        "/home/robert/angularJs/angular-seed-master_cros_static/app/modules/patient/patientServices.js",
+        "/home/robert/angularJs/angular-seed-master_cros_static/app/bower_components/bootstrap/js/scrollspy.js"
+    ]
+}

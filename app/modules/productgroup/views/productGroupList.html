@@ -1,0 +1,50 @@
+﻿<div id="wrapper">
+
+    <!-- Navigation -->
+    <div ng-include="'menu.html'" />
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Grupy produktów</h1>
+                    <p>
+                        <input type="text" ng-model="nameFilter" placeholder="Szukaj..." ng-change="search()" />
+                        <button class="btn btn-primary" ng-click="addProductGroup()">
+                            <span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>Dodaj grupę produktów
+                        </button>
+                    </p>
+                    <load-Data loadingIndicator="dataLoading" loadingMessage="loadingMessage" errorMessage="errorMessage">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Grupa produktów</th>
+                                    <th>Liczba produktów</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="product in productGroupList | filter: name">
+                                    <td>
+                                        <a href="#/productgroup/{{product.productGroupId}}/edit" style="text-transform: capitalize">{{product.name}}</a>
+                                    </td>
+                                    <td>{{product.productCount}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-xs" aria-label="Left Align" ng-click="removeProductGroup($index)">
+                                            <span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </load-Data>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>

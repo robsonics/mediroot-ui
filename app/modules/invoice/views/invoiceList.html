@@ -1,0 +1,55 @@
+﻿<div id="wrapper">
+
+    <!-- Navigation -->
+    <div ng-include="'menu.html'" />
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Faktury</h1>
+                    <load-data loading="dataLoading" loadingmessage="loadingMessage" error="errorMessage">
+                        <p>
+                            <input type="text" ng-model="nameFilter" placeholder="Szukaj..." />
+                            <button class="btn btn-primary" ng-click="AddInvoice()">
+                                <span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>Dodaj fakturę
+                            </button>
+                        </p>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Lp </th>
+                                    <th>Symbol</th>
+                                    <th>Klient</th>
+                                    <th>Data sprzedaży</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="invoice in invoiceList | filter: nameFilter">
+                                    <td>{{$index + 1}}</td>
+                                    <td>
+                                        <a href="#/invoice/{{invoice.invoiceid}}/edit" style="text-transform: capitalize">{{invoice.symbol}}</a>
+                                    </td>
+                                    <td>{{invoice.customer}}</td>
+                                    <td>{{invoice.saledate | date : 'yyyy-MM-dd'}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-xs" aria-label="Left Align" popover-placement="bottom" popover="Usuń fakturę" popover-trigger="mouseenter" ng-click="removeInvoice($index)">
+                                            <span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </load-data>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>

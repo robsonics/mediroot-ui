@@ -1,0 +1,91 @@
+﻿<div id="wrapper">
+
+    <!-- Navigation -->
+    <div ng-include="'menu.html'" />
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+
+                <h1 class="page-header" ng-hide="isEdit"><a href="#/pricing">Cennik</a> :: Nowy Produkt</h1>
+                <h1 class="page-header" ng-show="isEdit"><a href="#/pricing">Cennik</a> :: Edycja {{product.name}}<small>{{product.icdcode}}</small></h1>
+                <div ng-show="error" class="alert alert-danger">{{error}}</div>
+
+                <div ng-hide="dataLoading">
+
+                    <div>
+                        <form name="form" ng-submit="Save()" role="form">
+                            <div class="row">
+                                <div class="form-group col-md-6" ng-class="{'has-error': form.product.name.$invalid && form.product.name.$dirty }">
+                                    <label for="name">Nazwa</label>
+                                    <input type="text" name="name" id="name" class="form-control" ng-model="product.name" ng-minlength="2" required style="text-transform: uppercase" />
+                                    <span ng-show="form.product.name.$error.required" class="help-block">Nazwa jest wymagana</span>
+                                    <span ng-show="form.product.name.$error.minlength" class="help-block">Minimalna długość w tym polu to 2 znaki</span>
+                                </div>
+                                <div class="form-group col-md-4" ng-class="{'has-error':form.product.icdCode.$invalid && form.product.icdCode.$dirty }">
+                                    <label for="icdCode">ICD9</label>
+                                    <input type="text" name="icdCode" id="icdCode" class="form-control" ng-model="product.icdCode" ng-minlength="1" style="text-transform: uppercase" />
+                                    <span ng-show="form.firstname.$error.minlength" class="help-block">Minimalna długość w tym polu to 1 znaki</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                
+                                <div class="form-group col-md-3">
+                                    <label>Minimalna cena</label>
+                                    <input type="number" name="PESEL" id="Text1" class="form-control" ng-model="product.lowerPrice" style="text-transform: uppercase"  />
+                                </div>
+                                <div class="form-group col-md-3" >
+                                    <label for="defaultPrice">Domyślna cena</label>
+                                    <input type="number" name="defaultPrice" id="defaultPrice" class="form-control" ng-model="product.defaultPrice"  style="text-transform: uppercase" ng-change="peselChange()" />
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>Maksymalna cena</label>
+                                    <input type="number" name="PESEL" id="Text2" class="form-control" ng-model="product.upperPrice" style="text-transform: uppercase"  />
+                                </div>
+                            </div>
+                            <div class="row">
+                                 <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios2"  value="1" checked ng-model="Taxed">
+                                        Opodatkowany:<br/>
+                                        <label ng-show="Taxed==1">Stawka podatku</label>
+                                        <input type="number" name="ta" ng-show="Taxed==1" id="taxrate" class="form-control" ng-model="product.taxrate" style="text-transform: uppercase"  />
+                                    </label>
+                                 </div> 
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios2"  value="0" checked ng-model="Taxed">
+                                        Nie opodatkowany:
+                                        //TODO
+                                    </label>
+                                </div> 
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-1 col-md-offset-8">
+                                    <button type="submit" ng-disabled="dataLoading" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Zapisz
+                                    </button>
+                                    <img ng-if="dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div ng-show="dataLoading">
+                <h3>Trwa pobieranie danych..</h3>
+                <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            </div>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+<!-- /#page-wrapper -->
+

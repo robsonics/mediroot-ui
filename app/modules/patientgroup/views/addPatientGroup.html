@@ -1,0 +1,95 @@
+﻿<div id="wrapper">
+
+    <!-- Navigation -->
+    <div ng-include="'menu.html'" />
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+
+                <h1 class="page-header" ng-hide="isEdit"><a href="#/productgroup">Grupy produktów</a> :: Nowy Produkt</h1>
+                <h1 class="page-header" ng-show="isEdit"><a href="#/productgroup">Grupy produktów</a> :: Edycja {{product.name}}</h1>
+                <div ng-show="error" class="alert alert-danger">{{error}}</div>
+
+                <div ng-hide="dataLoading">
+
+                    <div>
+                            <div class="row">
+                                <div class="form-group col-md-6" ng-class="{'has-error': form.product.name.$invalid && form.product.name.$dirty }">
+                                    <label for="name">Nazwa</label>
+                                    <input type="text" name="name" id="name" class="form-control" ng-model="name" ng-minlength="2" required style="text-transform: uppercase" />
+                                    <span ng-show="form.product.name.$error.required" class="help-block">Nazwa jest wymagana</span>
+                                    <span ng-show="form.product.name.$error.minlength" class="help-block">Minimalna długość w tym polu to 2 znaki</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-8" ng-class="{'has-error':form.product.comment.$invalid && form.product.comment.$dirty }">
+                                    <label for="comment">Komentarz</label>
+                                    <input type="text" name="comment" id="comment" class="form-control" ng-model="comment" />
+                                </div>
+                            </div>
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label for="treatment">Product</label>
+                            <angucomplete-alt id="treatment"
+                                              pause="200"
+                                              minlength="2"
+                                              selected-object="OnTreatmentChange"
+                                              remote-url="/diagnose/list/"
+                                              title-field="name"
+                                              description-field="icdCode"
+                                              input-class="form-control form-control-small"/>
+                        </div>
+                        <div class="col-md-1 col-md-offset-1">
+                            <button type="submit" ng-disabled="dataLoading" class="btn btn-primary" ng-click="Save()">
+                                <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Zapisz
+                            </button>
+                            <img ng-if="dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                        </div>
+                    </div>
+                            <div class="row">
+                                <table class="table table-hover" ng-hide="!products.length">
+                                    <thead>
+                                        <tr>
+                                            <th>Lp</th>
+                                            <th>Produ</th>
+                                            <th>ICD9</th>
+                                            <th>Cena</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="visitItem in products">
+                                            <td>{{$index + 1}}</td>
+                                            <td>{{visitItem.name}}</td>
+                                            <td>{{visitItem.icdCode}}</td>
+                                            <td>{{visitItem.defaultPrice}}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-xs" aria-label="Left Align" ng-click="removeProduct($index)">
+                                                    <span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                    
+                </div>
+            </div>
+
+
+
+        </div>
+        <div ng-show="dataLoading">
+            <h3>Trwa pobieranie danych..</h3>
+            <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+        </div>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+<!-- /#page-wrapper -->
+
