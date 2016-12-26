@@ -1,4 +1,4 @@
-<div id="wrapper">
+﻿<div id="wrapper">
 
     <!-- Navigation -->
     <div ng-include="'menu.html'" />
@@ -13,6 +13,7 @@
                         <uib-tab heading="Dane ogólne">
                             <div ng-controller="UserProfilePersonalDataController">
                                 <br/>
+                                <load-data loading="dataLoading" errormessage="errorMessage">
                                     <div >
                                         <form name="form" ng-submit="Update()" role="form">
                                             <div class="row">
@@ -103,6 +104,7 @@
                                             </div>
                                         </form>
                                     </div>
+                                </load-data>
                             </div>
                         </uib-tab>
                         <uib-tab heading="Ustawienia systemowe">

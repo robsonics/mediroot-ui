@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 angular.module('Patient')
 .directive('teethGraph', function () {
@@ -15,7 +15,7 @@ angular.module('Patient')
             var tooth = [];
 
             function Init() {
-               
+
                 var update = false;
                 var moveOffset = 5;
                 var readOnly = scope.isReadonly;
@@ -1024,7 +1024,7 @@ angular.module('Patient')
                 stage.update();
 
             }
-            
+
             scope.$watch('state', function (newVal, oldVal) {
                 if (undefined == scope.state) {
                     return;
@@ -1037,11 +1037,11 @@ angular.module('Patient')
                     hasBeenInit = true;
                     return;
                 }
-                tooth.forEach(function(x) {
+                tooth.forEach(function (x) {
                     x.Update();
                 });
             });
-        
+
         }
     };
 })
@@ -1084,7 +1084,7 @@ angular.module('Patient')
         { id: '48', name: 'Dolna Prawa Ósemka' }
     ];
 })
-.factory('OnPeselChanged',function() {
+.factory('OnPeselChanged', function () {
     return function ($scope) {
         var year = $scope.PESEL.substring(0, 2);
         var month = $scope.PESEL.substring(2, 4);
@@ -1094,7 +1094,7 @@ angular.module('Patient')
         } else {
             $scope.birthdate = '19' + year + '-' + month + '-' + day;
         }
-        if ($scope.PESEL.substring(10, 10) % 2 == 0) {
+        if ($scope.PESEL.substring(9, 10) % 2 == 0) {
             $scope.sex = "Kobieta";
         } else {
             $scope.sex = "Mężczyzna";
@@ -1104,7 +1104,7 @@ angular.module('Patient')
 .factory('Interaction', ['ngDialog', function (ngDialog) {
     var service = {};
 
-    service.ShowConfimation = function(question, confirmResponse, negateResponse, successCallabck, negativeCallback) {
+    service.ShowConfimation = function (question, confirmResponse, negateResponse, successCallabck, negativeCallback) {
         ngDialog.openConfirm({
             template: '\
                         <p>' + question + ' </p>\
@@ -1114,36 +1114,56 @@ angular.module('Patient')
                         </div>',
             plain: true
         }).then(
-            function(value) {
+            function (value) {
                 successCallabck();
             },
-            function(value) {
+            function (value) {
                 negativeCallback();
             });
 
     };
     return service;
 }])
- .factory('CircularBuffer',['$rootScope',function($rootScope) {
-        var service = {
-            
-        };
-        service.SetSize = function(newSize) {
-            this.size = newSize;
-            $rootScope.buffer = [];
-        };
+.factory('CircularBuffer', ['$rootScope', function ($rootScope) {
+    var service = {
 
-        serivce.GetSize = function() {
-            return this.size;
-        };
-        
-        service.Add = function(item) {
-            if ($rootScope.buffer.length == this.size) {
-                $rootScope.buffer[$rootScope.buffer%this.size] = item;
-            } else {
-                $rootScope.buffer.push(item);
-            }
-        };
+    };
+    service.SetSize = function (newSize) {
+        this.size = newSize;
+        $rootScope.buffer = [];
+    };
 
-        return service;
-    }]);
+    serivce.GetSize = function () {
+        return this.size;
+    };
+
+    service.Add = function (item) {
+        if ($rootScope.buffer.length == this.size) {
+            $rootScope.buffer[$rootScope.buffer % this.size] = item;
+        } else {
+            $rootScope.buffer.push(item);
+        }
+    };
+
+    return service;
+}])
+.factory('DiagnoseTemplateAPI', ['$http', 'ApiAdress', function ($http, ApiAdress) {
+    return {
+        GetDiagnoseTemplate: function () {
+            return $http.get(ApiAdress + '/diagnose/template/list', { cache: true });
+        }
+    };
+}])
+.factory('TreatmentProductAPI', ['$http', 'ApiAdress', function ($http, ApiAdress) {
+    return {
+        GetTreatmentProductList: function () {
+            return $http.get(ApiAdress + '/treatment/product/list', { cache: true });
+        }
+    };
+}]).factory('TreatmentAPI', ['$http', 'ApiAdress', function ($http, ApiAdress) {
+    return {        
+      GetTreatmentList: function() {
+          return $http.get(ApiAdress + '/treatment/list', { cache: true });
+      }  
+    };
+}]);

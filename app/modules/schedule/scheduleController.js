@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 angular.module('Schedule', ['ngDialog', 'ui.calendar', 'ui.bootstrap', 'Common'])
-.controller('ScheduleController', ['$scope', 'LocationService', '$http', 'uiCalendarConfig', '$compile', 'DateFormatter', function ($scope, LocationService, $http, uiCalendarConfig, $compile, DateFormatter) {
+.controller('ScheduleController', ['$scope', 'LocationService', '$http', 'uiCalendarConfig', '$compile', 'DateFormatter', 'ApiAdress', function ($scope, LocationService, $http, uiCalendarConfig, $compile, DateFormatter, ApiAdress) {
     $scope.error = null;
     $scope.dataLoading = true;
     var startDate = null;
@@ -36,7 +36,7 @@ angular.module('Schedule', ['ngDialog', 'ui.calendar', 'ui.bootstrap', 'Common']
 
         startDate = DateFormatter.format(s);
         endDate = DateFormatter.format(e);
-        $http.get('/calendar/list/' + startDate + '/' + endDate).success(function (data) {
+        $http.get(ApiAdress + '/calendar/list/' + startDate + '/' + endDate).success(function (data) {
             callback(data);
             $scope.dataLoading = false;
         }).error(function () {
@@ -128,7 +128,7 @@ angular.module('Schedule', ['ngDialog', 'ui.calendar', 'ui.bootstrap', 'Common']
     /* event sources array*/
     $scope.eventSources = [$scope.events, $scope.eventSource, $scope.eventsF];
 }])
-.controller('CreateScheduleController', ['$scope', 'LocationService', '$http', 'uiCalendarConfig', 'DateFormatter', function ($scope, LocationService, $http, uiCalendarConfig, DateFormatter) {
+.controller('CreateScheduleController', ['$scope', 'LocationService', '$http', 'uiCalendarConfig', 'DateFormatter', 'ApiAdress', function ($scope, LocationService, $http, uiCalendarConfig, DateFormatter, ApiAdress) {
     $scope.error = null;
     $scope.dataLoading = false;
     $scope.doctorLoading = false;
@@ -143,7 +143,7 @@ angular.module('Schedule', ['ngDialog', 'ui.calendar', 'ui.bootstrap', 'Common']
         title: 'Open Sesame',
         start: new Date(),
     });
-
+    // TODO replace
     $scope.doctors = [
   { name: "Urszula Korzeniowska", description: "Stomatolog", id: 1 },
   { name: "Joanna Dąbrowicz", description: "Stomatolog", id: 2 }
@@ -157,7 +157,7 @@ angular.module('Schedule', ['ngDialog', 'ui.calendar', 'ui.bootstrap', 'Common']
         $scope.error = null;
         $scope.doctor = doctor;
 
-        $http.get('/calendar/list/' + DateFormatter.format(startDate) + '/' + DateFormatter.format(endDate) + '/' + doctor.originalObject.id).
+        $http.get(ApiAdress + '/calendar/list/' + DateFormatter.format(startDate) + '/' + DateFormatter.format(endDate) + '/' + doctor.originalObject.id).
         success(function (data) {
             data.forEach(function (element) {
                 $scope.events.push({
@@ -193,7 +193,7 @@ angular.module('Schedule', ['ngDialog', 'ui.calendar', 'ui.bootstrap', 'Common']
     };
 
     $scope.save = function () {
-        $http.post('/visit/add', {
+        $http.post(ApiAdress + '/visit/add', {
 
         }).success(function (data) {
 
@@ -219,7 +219,7 @@ angular.module('Schedule', ['ngDialog', 'ui.calendar', 'ui.bootstrap', 'Common']
         
         $scope.dataLoading = true;
         $scope.error = null;
-        $http.get('/calendar/list/' + DateFormatter.format(start) + '/' + DateFormatter.format(end) + '/' + $scope.doctor.originalObject.id).success(function (data) {
+        $http.get(ApiAdress + '/calendar/list/' + DateFormatter.format(start) + '/' + DateFormatter.format(end) + '/' + $scope.doctor.originalObject.id).success(function (data) {
             callback(data);
             $scope.dataLoading = false;
         }).error(function () {

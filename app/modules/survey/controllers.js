@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 angular.module('Survey', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-alt'])
-.controller('SurveyListController', ['$scope', '$rootScope', '$http', '$location', 'ngDialog', function ($scope, $rootScope, $http, $location, ngDialog) {
+.controller('SurveyListController', ['$scope', '$rootScope', '$http', '$location', 'ngDialog', 'ApiAdress', function ($scope, $rootScope, $http, $location, ngDialog, ApiAdress) {
     $scope.username = $rootScope.globals.currentUser.username;
     $scope.dataLoading = true;
 
@@ -37,7 +37,7 @@ angular.module('Survey', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-a
         $location.path('/survey/create');
     };
 
-    $http.get('/survey/all').success(function (data, status, headers, config) {
+    $http.get(ApiAdress + '/survey/all').success(function (data, status, headers, config) {
         $scope.surveyList = data;
         $scope.dataLoading = false;
     }).error(function (data, status, headers, config) {
@@ -46,7 +46,7 @@ angular.module('Survey', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-a
 
     });
 }])
-.controller('CreateSurveyController', ['$scope', '$rootScope', '$http', '$location', 'ngDialog', function ($scope, $rootScope, $http, $location, ngDialog) {
+.controller('CreateSurveyController', ['$scope', '$rootScope', '$http', '$location', 'ngDialog', 'ApiAdress', function ($scope, $rootScope, $http, $location, ngDialog, ApiAdress) {
             $scope.username = $rootScope.globals.currentUser.username;
 
             $scope.questionTypes = [
@@ -81,7 +81,7 @@ angular.module('Survey', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-a
 
             $scope.CreateSurvey = function () {
                 console.log('CreateSurvey');
-                $http.post('/survey/add', {
+                $http.post(ApiAdress + '/survey/add', {
                     name: $scope.name,
                     surveyqueries: $scope.queryList,
                     systemuserid: $rootScope.globals.currentUser.systemuserid

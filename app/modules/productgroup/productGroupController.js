@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 angular.module('ProductGroup', ['Common', 'ui.bootstrap'])
-.controller('ProductGroupList', ['$scope', 'LocationService','Interaction', '$http', function ($scope, LocationService,Interaction, $http) {
+.controller('ProductGroupList', ['$scope', 'LocationService', 'Interaction', '$http', 'ApiAdress', function ($scope, LocationService, Interaction, $http, ApiAdress) {
     $scope.dataLoading = true;
     $scope.loadingMessage = 'Trwa pobierania listy produktów';
 
@@ -37,7 +37,7 @@ angular.module('ProductGroup', ['Common', 'ui.bootstrap'])
        
     };
 
-    $http.get('/productgroup/all').success(function (data) {
+    $http.get(ApiAdress + '/productgroup/all').success(function (data) {
         $scope.productGroupList = data;
         $scope.dataLoading = false;
     }).error(function () {
@@ -46,7 +46,7 @@ angular.module('ProductGroup', ['Common', 'ui.bootstrap'])
     });
 
 }])
-.controller('AddProductGroupList', ['$scope', 'LocationService', 'Interaction', '$http', function ($scope, LocationService, Interaction, $http) {
+.controller('AddProductGroupList', ['$scope', 'LocationService', 'Interaction', '$http', 'ApiAdress', function ($scope, LocationService, Interaction, $http, ApiAdress) {
     $scope.isEdit = false;
     $scope.products = [];
     $scope.OnTreatmentChange = function (newItem) {
@@ -69,7 +69,7 @@ angular.module('ProductGroup', ['Common', 'ui.bootstrap'])
                 return { treatmentProductId: k.id };
             })
         };
-        $http.post('/productgroup/new',req
+        $http.post(ApiAdress + '/productgroup/new',req
            ).success(function(data) {
                 $scope.dataLoading = false;
                 LocationService.productGroup();

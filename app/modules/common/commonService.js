@@ -1,45 +1,7 @@
-angular.module('Common', ['ngDialog'])
-    .constant('serverAdress','http://192.168.1.120:8081')
-    .factory('BackendServices', ['$http', 'serverAdress', function ($http, serverAdress) {
-        return {
-            addPatient:function (patient) {
-                return $http.post(serverAdress + '/patient/add', patient);
-            },
-            getPatientDetails:function (patientId) {
-              return $http.get(serverAdress + '/patient/' + patientId + '/details');  
-            },        
-            editPatient: function (patientId, patient) {
-                return $http.post(serverAdress + '/patient/' + patientId + '/update', patient);
-            },
-            getVisitHistory: function (patientId) {
-                return $http.get(serverAdress + '/visit/' + patientId + '/patient');
-            },
-            getSurveyDetails: function (surveyId) {
-                return $http.get(serverAdress + '/survey/' + surveyId + '/detail');
-            },
-            getAllSurvey: function () {
-                return $http.get(serverAdress + '/survey/all');
-            },
-            savePatientResponse: function (patientId, response){
-                return $http.post(serverAdress + '/survey/' + patientId + '/save/response', response);
-            },
-            getPatientResponse: function (patientId) {
-                return $http.get(serverAdress + '/survey/' + patientId + '/responses');
-            },
-            addVisit: function (data) {
-                return $http.post(serverAdress + '/visit/add', data);
-            },
-            sendMessage: function (message) {
-                return $http.post(serverAdress + '/message/send', message);
-            },
-            getPatientAttachment: function (patientId) {
-                return $http.get(serverAdress + '/attachment/patient/' + patientId);
-            },
-            downloadAttachment: function (attachmentId) {
-                return $http.get(serverAdress + '/attachment/' + attachmentId + '/preview');
-            }        
-        }
-    }])
+﻿angular.module('Common', ['ngDialog'])
+    //.constant('ApiAdress','http://192.168.1.120:8081')
+    /.constant('ApiAdress','http://localhost:8081')
+    .constant('ApiAdress','http://192.168.1.104:8081')
     .factory('ToothElement', function () {
         return [
             { id: '00', name: 'Całość' },
@@ -205,6 +167,10 @@ angular.module('Common', ['ngDialog'])
             $location.url('/scheduleentry/eidt/' + calendarEventId + '/' + subCalendarEventId);
         };
 
+        service.statmentSignOff = function(statmentTemplateId, patientId, surveyId) {
+            $location.path('/statmentsignoff/' + statmentTemplateId + '/' + patientId + '/' + surveyId);
+        };
+
         return service;
     }])
     .factory('CircularBuffer', ['$rootScope', function ($rootScope) {
@@ -260,4 +226,10 @@ angular.module('Common', ['ngDialog'])
             },
             templateUrl: 'modules/common/loadData.tpl.html'
         };
-    });
+    })
+    .factory('PayerList', [function () {
+        return [{ id: 0, name: 'Prywatna' },
+                { id: 1, name: 'NFZ' },
+                { id: 2, name: 'PZU' },
+                { id: 3, name: 'Medpolonia' }];
+    }]);

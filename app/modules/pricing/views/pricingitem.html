@@ -31,7 +31,9 @@
                                         <a href="#/product/details/{{product.id}}" style="text-transform: capitalize">{{product.name}}</a>
                                     </td>
                                     <td>{{product.icdCode}}</td>
-                                    <td>{{product.defaultPrice}}</td>
+                                    <td><span ng-if="product.lowerPrice==0 || product.upperPrice==0">{{product.defaultPrice}}</span>
+                                        <span ng-if="product.lowerPrice!=0 && product.upperPrice!=0">( {{product.lowerPrice}} - {{product.upperPrice}} )</span>
+                                    </td>
                                     <td>
                                         <button type="button" class="btn btn-danger btn-xs" aria-label="Left Align" ng-click="removeProduct($index)">
                                             <span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span>

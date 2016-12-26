@@ -1,7 +1,17 @@
 'use strict';
 
 angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
-.controller('PricingController', ['$scope', '$location', '$http', 'Interaction', function ($scope, $location, $http, Interaction) {
+.factory('PricingAPI', ['$http','ApiAdress', function($http) {
+    return {
+      countAllPricingItems: function() {
+          return $http.get(ApiAdress + '/treatment/product/all/count');
+      },
+      getAllPricingItems: function(page, pageSize) {
+          return $http.get(ApiAdress + '/treatment/product/all/' + page + '/' + pageSize);
+      },
+    };
+}])
+.controller('PricingController', ['$scope', '$location', '$http', 'Interaction', 'PricingAPI', 'ApiAdress', function ($scope, $location, $http, Interaction, PricingAPI, ApiAdress) {
     $scope.error = null;
     $scope.pricingListLoading = true;
     $scope.productListCount = 0;
@@ -9,7 +19,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
     $scope.pageSize = 20;
     $scope.showPaging = true;
 
-    $http.get('/diagnose/all/count')
+    PricingAPI.countAllPricingItems()
         .success(function (data, status, headers, config) {
             $scope.productListCount = data;
             $scope.showPaging = $scope.productListCount > $scope.pageSize;
@@ -23,7 +33,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
 
     $scope.pageChanged = function () {
         if ('' == $scope.nameFilter || null == $scope.nameFilter) {
-            $http.get('/diagnose/all/' + $scope.page + '/' + $scope.pageSize)
+            PricingAPI.getAllPricingItems($scope.page, $scope.pageSize)
                .success(function (data, status, headers, config) {
                    $scope.productList = data;
                    $scope.pricingListLoading = false;
@@ -32,7 +42,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
                    $scope.pricingListLoading = false;
                });
         } else {
-            $http.get('/diagnose/list/' + $scope.nameFilter + '/' + $scope.page + '/' + $scope.pageSize)
+            $http.get(ApiAdress + '/treatment/product/list/' + $scope.nameFilter + '/' + $scope.page + '/' + $scope.pageSize)
               .success(function (data, status, headers, config) {
                   $scope.productList = data;
                   $scope.pricingListLoading = false;
@@ -51,7 +61,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
             return;
         }
         $scope.page = 1;
-        $http.get('/diagnose/list/' + $scope.nameFilter + '/' + $scope.page + '/' + $scope.pageSize)
+        $http.get(ApiAdress + '/treatment/product/list/' + $scope.nameFilter + '/' + $scope.page + '/' + $scope.pageSize)
               .success(function (data) {
                   $scope.productList = data.list;
                   $scope.productListCount = data.total;
@@ -75,7 +85,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
         Interaction.ShowConfimation('Czy na pewno chcesz usun¹æ ' + $scope.productList[index].name + ' ?', 'Tak', 'Nie',
             function () {
                 console.log('Usuwanie pacjenta');
-                $http.delete('/diagnose/remove/' + $scope.productList[index].id)
+                $http.delete('/treatment/product/remove/' + $scope.productList[index].id)
                 .success(function (data) {
                     //remove from ui
                     $scope.productList.splice(index, 1);
@@ -94,7 +104,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
     };
 
 }])
-.controller('EditPricingController', ['$scope', '$location', '$http', '$routeParams', function ($scope, $location, $http, $routeParams) {
+.controller('EditPricingController', ['$scope', '$location', '$http', '$routeParams', 'ApiAdress', function ($scope, $location, $http, $routeParams, ApiAdress) {
     $scope.isEdit = true;
     $scope.error = null;
     $scope.id = $routeParams.productId;
@@ -102,7 +112,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
     $scope.Taxed = 1;
     console.log($routeParams.productId);
 
-    $http.get('/diagnose/detail/' + $scope.id)
+    $http.get(ApiAdress + '/treatment/product/detail/' + $scope.id)
         .success(function (data) {
             $scope.product = data;
             $scope.dataLoading = false;
@@ -117,7 +127,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
         $scope.dataLoading = true;
 
         console.log('save command invoked');
-        $http.post('/diagnose/edit/' + $scope.id, {
+        $http.post(ApiAdress + '/treatment/product/edit/' + $scope.id, {
             name: $scope.product.name,
             icd9code: $scope.product.icd9Code,
             defaultPrice: $scope.product.defaultPrice,
@@ -134,7 +144,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
     };
 
 }])
-.controller('NewPricingController', ['$scope', '$location', '$http', function ($scope, $location, $http) {
+.controller('NewPricingController', ['$scope', '$location', '$http', 'ApiAdress', function ($scope, $location, $http, ApiAdress) {
     $scope.isEdit = false;
     $scope.error = null;
     $scope.Taxed = 1;
@@ -143,7 +153,7 @@ angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
         console.log('save command invoked');
         $scope.error = null;
         $scope.dataLoading = true;
-        $http.post('/diagnose/new', {
+        $http.post(ApiAdress + '/treatment/product/new', {
             name: $scope.product.name,
             icd9Code: $scope.product.icd9Code,
             defaultPrice: $scope.product.defaultPrice,

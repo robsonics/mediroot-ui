@@ -1,7 +1,6 @@
 ﻿'use strict';
 angular.module('Medicine', ['ngRoute', 'ui.bootstrap', 'Common'])
     .config(['$routeProvider', function ($routeProvider) {
-
         $routeProvider.when('/medicinelist', {
             controller: 'MedicineListController',
             templateUrl: 'modules/medicine/views/medicineList.html'
@@ -14,12 +13,12 @@ angular.module('Medicine', ['ngRoute', 'ui.bootstrap', 'Common'])
         });
 
     }])
-    .factory('MedicineAPI', ['$http', '$timeout', function ($http, $timeout) {
+    .factory('MedicineAPI', ['$http', '$timeout', 'ApiAdress', function ($http, $timeout, ApiAdress) {
         var service = {};
         var responseDelay = 1500;
         service.GetAll = function (successfulCallback, errorCallback) {
 
-            $http.get('/medicine/all').success(function (resutl) {
+            $http.get(ApiAdress + '/medicine/all').success(function (resutl) {
                 successfulCallback(resutl);
             }).error(function (response) {
                 errorCallback(response);
@@ -36,7 +35,7 @@ angular.module('Medicine', ['ngRoute', 'ui.bootstrap', 'Common'])
         };
 
         service.AddMedicine = function (objectToAdd, successfulCallback, errorCallback) {
-            $http.post('/medicine/new', objectToAdd).success(function (result) {
+            $http.post(ApiAdress + '/medicine/new', objectToAdd).success(function (result) {
                 successfulCallback(result);
             }).error(function (result) {
                 errorCallback(result);
@@ -48,7 +47,7 @@ angular.module('Medicine', ['ngRoute', 'ui.bootstrap', 'Common'])
 
         service.removeMedicine = function (medicineId, successfulCallback, errorCallback) {
 
-            $http.delete('/medicine/' + medicineId + '/remove').success(function (response) {
+            $http.delete(ApiAdress + '/medicine/' + medicineId + '/remove').success(function (response) {
                 successfulCallback(response);
             }).error(function (response) {
                 errorCallback(response);
@@ -59,7 +58,7 @@ angular.module('Medicine', ['ngRoute', 'ui.bootstrap', 'Common'])
         };
 
         service.editMedicine = function (medicineId, objectToEdit, successfulCallback, errorCallback) {
-            $http.post('/medicine/' + medicineId + '/edit').success(function (response) {
+            $http.post(ApiAdress + '/medicine/' + medicineId + '/edit').success(function (response) {
                 successfulCallback(response);
             }).error(function (response) {
                 errorCallback(response);
@@ -67,7 +66,7 @@ angular.module('Medicine', ['ngRoute', 'ui.bootstrap', 'Common'])
         };
 
         service.medicineDetalis = function (medicineId, successfulCallback, errorCallback) {
-            $http.get('/medicine/' + medicineId + '/detail').success(function (response) {
+            $http.get(ApiAdress + '/medicine/' + medicineId + '/detail').success(function (response) {
                 successfulCallback(response);
             }).error(function (response) {
                 errorCallback(response);

@@ -17,12 +17,12 @@ angular.module('Invoice', ['ngRoute', 'ui.bootstrap', 'Common'])
         });
 
     }])
-    .factory('InvoiceAPI', ['$http', '$timeout', function ($http, $timeout) {
+    .factory('InvoiceAPI', ['$http', '$timeout', 'ApiAdress', function ($http, $timeout, ApiAdress) {
         var service = {};
         var responseDelay = 1500;
         service.GetAll = function (successfulCallback, errorCallback) {
 
-            $http.get('/invoice/all').success(function (resutl) {
+            $http.get(ApiAdress + '/invoice/all').success(function (resutl) {
                 successfulCallback(resutl);
             }).error(function (response) {
                 errorCallback(response);
@@ -39,7 +39,7 @@ angular.module('Invoice', ['ngRoute', 'ui.bootstrap', 'Common'])
         };
 
         service.AddInvoice = function (objectToAdd, successfulCallback, errorCallback) {
-            $http.post('/invoice/new', objectToAdd).success(function (result) {
+            $http.post(ApiAdress + '/invoice/new', objectToAdd).success(function (result) {
                 successfulCallback(result);
             }).error(function (result) {
                 errorCallback(result);
@@ -51,7 +51,7 @@ angular.module('Invoice', ['ngRoute', 'ui.bootstrap', 'Common'])
 
         service.removeInvoice = function (invoiceId, successfulCallback, errorCallback) {
 
-            $http.delete('/invoice/' + invoiceId + '/remove').success(function (response) {
+            $http.delete(ApiAdress + '/invoice/' + invoiceId + '/remove').success(function (response) {
                 successfulCallback(response);
             }).error(function (response) {
                 errorCallback(response);
@@ -62,7 +62,7 @@ angular.module('Invoice', ['ngRoute', 'ui.bootstrap', 'Common'])
         };
 
         service.editInvoice = function (invoiceId, objectToEdit, successfulCallback, errorCallback) {
-            $http.post('/invoice/' + invoiceId + '/edit').success(function (response) {
+            $http.post(ApiAdress + '/invoice/' + invoiceId + '/edit').success(function (response) {
                 successfulCallback(response);
             }).error(function (response) {
                 errorCallback(response);
@@ -70,7 +70,7 @@ angular.module('Invoice', ['ngRoute', 'ui.bootstrap', 'Common'])
         };
 
         service.invoiceDetalis = function (invoiceId, successfulCallback, errorCallback) {
-            $http.get('/invoice/' + invoiceId + '/detail').success(function (response) {
+            $http.get(ApiAdress + '/invoice/' + invoiceId + '/detail').success(function (response) {
                 successfulCallback(response);
             }).error(function (response) {
                 errorCallback(response);
@@ -78,7 +78,7 @@ angular.module('Invoice', ['ngRoute', 'ui.bootstrap', 'Common'])
         };
 
         service.checkIsInvoiceSymbolUnique = function (symbol, successfulCallback, errorCallback) {
-            $http.get('/invoice/' + symbol + '/symbol/unique').success(function (response) {
+            $http.get(ApiAdress + '/invoice/' + symbol + '/symbol/unique').success(function (response) {
                 successfulCallback(response);
             }).error(function (response) {
                 errorCallback(response);
@@ -86,14 +86,14 @@ angular.module('Invoice', ['ngRoute', 'ui.bootstrap', 'Common'])
         };
 
         service.getNextInvoiceSymbol = function (successfulCallback, errorCallback) {
-            $http.get('/invoice/symbol').success(function (response) {
+            $http.get(ApiAdress + '/invoice/symbol').success(function (response) {
                 successfulCallback(response);
             }).error(function (response) {
                 errorCallback(response);
             });
         };
         service.getPdf = function (invoiceId, successfulCallback, errorCallback) {
-            $http.get('/invoice/' + invoiceId + '/pdf').success(function (response) {
+            $http.get(ApiAdress + '/invoice/' + invoiceId + '/pdf').success(function (response) {
                 successfulCallback(response);
             }).error(function (response) {
                 errorCallback(response);

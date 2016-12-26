@@ -1,4 +1,23 @@
-﻿<div class="container shadow-z-1" ng-cloak>
+﻿<style>
+    .remove-btn {
+        margin-top: 30px;
+        border-radius: 12px;
+        width: 24px;
+        height: 24px;
+        margin-left: -23px;
+    }
+    .diagnose-box {
+            padding-top: 13px;
+    }
+    .add-btn-icon {
+        margin-right: 3px;
+    }
+    .center-row {
+        display: flex;
+        align-items: center;
+    }
+</style>
+<div class="container shadow-z-1" ng-cloak>
     <div class="row">
         <div class="col-md-2 center-block">
             <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="back()" popover-placement="bottom" popover="Cofnij" popover-trigger="mouseenter">
@@ -8,7 +27,7 @@
         <div class="col-md-8">
             <div ng-show="patient">
                 <p class="text-center">
-                    <h2>{{patient.lastname | uppercase}}&nbsp;{{patient.firstname | uppercase}}</h2>
+                    <h2>{{::patient.lastname | uppercase}}&nbsp;{{::patient.firstname | uppercase}}</h2>
                 </p>
             </div>
             <div ng-hide="patient">
@@ -38,16 +57,16 @@
                 <hr/>
                 <dl class="dl-horizontal">
                     <dt>PESEL:</dt>
-                    <dd><p ng-show="patient.pesel">{{patient.pesel}}</p><i ng-hide="patient.pesel">Brak</i></dd>
+                    <dd><p ng-show="patient.pesel">{{::patient.pesel}}</p><i ng-hide="patient.pesel">Brak</i></dd>
                     <dt>Numer telefonu:</dt> 
-                    <dd><p ng-show="patient.phone">{{patient.phone}}</p><i ng-hide="patient.phone">Brak</i></dd>
+                    <dd><p ng-show="patient.phone">{{::patient.phone}}</p><i ng-hide="patient.phone">Brak</i></dd>
                     <dt>Email:</dt> 
-                    <dd><p ng-show="patient.email">{{patient.email}}</p><i ng-hide="patient.email">Brak</i></dd>
+                    <dd><p ng-show="patient.email">{{::patient.email}}</p><i ng-hide="patient.email">Brak</i></dd>
                     <dt>Adres:</dt> 
-                    <dd><p >{{patient.adress}}</p><br>
-                    {{patient.city}}<br>
-                    {{patient.postal}}<br>
-                    {{patient.country}}<br></dd>
+                    <dd><p >{{::patient.adress}}</p><br>
+                    {{::patient.city}}<br>
+                    {{::patient.postal}}<br>
+                    {{::patient.country}}<br></dd>
                 </dl>
                 <br>
             </div>
@@ -56,87 +75,176 @@
             </div> 
         </tab>
         <tab heading="Nowa wizyta">
-            <div ng-controller="CreateNewVisitController">
-                <teeth-Graph isReadonly="false" state="state" ></teeth-Graph>
-                <form name="form" ng-submit="addNewDiagnoze()" role="form">
-                    <div class="row">
-                        <div class="form-group col-md-12">
-                            <label for="diagnoze">Diagnoza</label>
-                            <input type="text" name="diagnoze" id="diagnoze" class="form-control" ng-model="newdiagnoze" />
-                        </div>
+            <div ng-controller="CreateNewVisitController as newVisitCtrl">
+                <div class="row center-row">
+                    <div class="col-md-4">
+                        <label for="visitPayer">Płatnik</label>
+                        <select ng-model="newVisitCtrl.vm.visitPayer"
+                                ng-options="item.id as item.name for item in newVisitCtrl.payerList"
+                                ng-init="newVisitCtrl.vm.visitPayer = newVisitCtrl.payerList[0]">
+                        </select>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-md-12">
-                            <label for="treatment">Leczenie</label>
-                            <angucomplete-alt id="treatment"
-                                              pause="200"
-                                              minlength="2"
-                                              selected-object="OnTreatmentChange"
-                                              remote-url="/diagnose/list/"
-                                              title-field="name"
-                                              description-field="icdCode"
-                                              input-class="form-control form-control-small"/>
-                        </div>
+                    <div class="col-md-5">
+                        <p class="input-group">
+                            <label for="visitPayer">Data</label>
+                            <input type="text" class="form-control" datepicker-popup ng-model="newVisitCtrl.vm.visitDate" is-open="newVisitCtrl.status.opened" datepicker-options="newVisitCtrl.dateOptions" close-text="Zamknij" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="newVisitCtrl.open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-md-9">
-                            <label for="tooth">Element</label>   
-                            <div angucomplete-alt id="tooth"  pause="100" selected-object="selectedTooth" local-data="element" search-fields="name,id" title-field="name" description-field="id" minlength="1" input-class="form-control form-control-small" match-class="highlight">
+                    <div class="col-md-3">
+                        <uib-timepicker ng-model="newVisitCtrl.vm.visitStartTime" hour-step="1" minute-step="10" show-meridian="false"></uib-timepicker>
+                    </div>
+                </div>
+                <teeth-Graph isReadonly="false" state="newVisitCtrl.state" ></teeth-Graph>
+                <form name="form" ng-submit="newVisitCtrl.addNewDiagnoze()" role="form">
+                    <div ng-repeat="diagnose in newVisitCtrl.vm.diagnoses" class="shadow-z-1 diagnose-box">
+                        <div class="row">
+                            
+                            <div class="form-group col-md-offset-1 col-md-7">
+                                <label for="diagnoze">{{$index+1}}. Diagnoza</label>
+                                <angucomplete-alt id="Diagnose-alt-{{$index}}"
+                                                  minlength="1"
+                                                  selected-object="newVisitCtrl.OnDiagnoseTemplateChange"
+                                                  local-data="newVisitCtrl.Template.diagnoseTemplate"
+                                                  search-fields="diagnose"
+                                                  title-field="diagnose"
+                                                  input-class="form-control form-control-small"
+                                                  match-class="highlight"/>
+                            </div>
+                            <div class="form-group  col-md-3">
+                                <label for="tooth-{{$index}}">Element</label>   
+                                <angucomplete-alt id="element-alt-{{$index}}"
+                                                  minlength="1"
+                                                  selected-object="newVisitCtrl.OnSelectedElement"
+                                                  local-data="newVisitCtrl.Template.elements"
+                                                  search-fields="name,id"
+                                                  title-field="name"
+                                                  description-field="id"
+                                                  input-class="form-control form-control-small"
+                                                  match-class="highlight"
+                                                  field-required="newVisitCtrl.vm.diagnoses[$index].isElementRequired"
+                                    />
+                            </div>
+                            <div class="form-group col-md-1">
+                                <button class="btn btn-xs btn-danger remove-btn" ng-click="newVisitCtrl.Actions.RemoveDiagnose($index)" ng-disabled="newVisitCtrl.vm.diagnoses.length<=1" >
+                                    <span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                </button>
                             </div>
                         </div>
-                        <div class="form-group col-md-2">
-                            <label for="prize">Cena</label>
-                            <input type="number" name="prize" id="Text1" class="form-control" ng-model="newPrice" />
+                        <div class="row" ng-repeat="treatment in newVisitCtrl.vm.diagnoses[$index].treatments">
+                            <div class="form-group col-md-9 col-md-offset-2">
+                                <label for="treatment">{{$parent.$index+1}}.{{$index+1}}. Leczenie</label>
+                                <angucomplete-alt id="treatment-{{$parent.$index}}-{{$index}}"    
+                                                  minlength="1"                                              
+                                                  selected-object="newVisitCtrl.OnTreatmentChange"
+                                                  local-data="newVisitCtrl.Template.treatments"
+                                                  search-fields="name"
+                                                  title-field="name"
+                                                  initial-value="newVisitCtrl.vm.diagnoses[$parent.$index].treatments[$index]"
+                                                  input-class="form-control form-control-small"/>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <button class="btn btn-xs btn-danger remove-btn" ng-click="newVisitCtrl.Actions.RemoveTreatment($parent.$index, $index)" >
+                                    <span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                </button>
+                            </div>
                         </div>
+                        <div class="row">
+                            <div class="form-group col-md-9 col-md-offset-2">
+                                <button type="submit" class="btn btn-sm btn-success" ng-click="newVisitCtrl.Actions.AddTreatment($index)" >
+                                    <span class="glyphicon glyphicon glyphicon-plus add-btn-icon" aria-hidden="true"></span>Dodaj nowe leczenie
+                                </button>
+                            </div>
+                        </div>
+                        <hr/>
+
+                        <div ng-repeat="treatment in newVisitCtrl.vm.diagnoses[$index].treatmentProducts">
+                            <div class="row">
+                                <div class="form-group col-md-offset-2 col-md-6">
+                                    <label for="treatment">{{$parent.$index+1}}.{{$index+1}}. Produkt</label>
+                                    <angucomplete-alt id="treatmentProduct-{{$parent.$index}}"
+                                                      pause="100"
+                                                      minlength="1"
+                                                      selected-o1ject="newVisitCtrl.OnTreatmentProductChange"
+                                                      local-data="newVisitCtrl.Template.treatmentProducts"
+                                                      title-field="name"
+                                                      search-fields="name"
+                                                      initial-value="newVisitCtrl.vm.diagnoses[$parent.$index].treatmentProducts[$index]"
+                                                      input-class="form-control form-control-small"/>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prize">Cena</label>
+                                    <input type="number" name="prize" id="Text1" class="form-control" ng-model="newVisitCtrl.vm.diagnoses[$index].treatmentProducts[$index].price" />
+                                </div>
+                                <div class="form-group col-md-1">
+                                    <button class="btn btn-xs btn-danger remove-btn" ng-click="newVisitCtrl.Actions.RemoveTreatmentProduct($parent.$index, $index)" >
+                                        <span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-9 col-md-offset-2">
+                                <button type="submit" class="btn btn-sm btn-success" ng-click="newVisitCtrl.Actions.AddTreatmentProduct($index)" >
+                                    <span class="glyphicon glyphicon glyphicon-plus add-btn-icon" aria-hidden="true"></span>Dodaj nowy produkt
+                                </button>
+                            </div>
+                        </div>
+
+                        <hr/>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-success" ng-disabled="dataLoading || (diagnoze == '' && treatment=='')" >
-                            <span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>Dodaj
-                        </button>
+                    <div class="row">
+                        <div class="form-group col-md-offset-9 col-md-2">
+                            <button type="submit" class="btn btn-success" ng-click="newVisitCtrl.Actions.AddDiagnose()" >
+                                <span class="glyphicon glyphicon glyphicon-plus add-btn-icon" aria-hidden="true"></span>Dodaj nową diagnoze
+                            </button>
+                        </div>
                     </div>
                 </form>
                 <br>
-                <table class="table table-hover" ng-hide="!visitRecords.length">
+                <table class="table table-hover" ng-hide="!newVisitCtrl.visitRecords.length">
                     <thead>
                         <tr>
                             <th>Lp</th>
-                            <th>Diagnoza</th>
-                            <th>Element</th>
-                            <th>Leczenie</th>
+                            <th>Produkt</th>
                             <th>Cena</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="visitItem in visitRecords">
+                        <tr ng-repeat="visitItem in newVisitCtrl.visitRecords">
                             <td>{{$index + 1}}</td>
                             <td>{{visitItem.description}}</td>
                             <td>{{visitItem.tooth.id}}</td>
-                            <td>{{visitItem.treatmentProduct.name}}<br>
-                                {{visitItem.treatmentProduct.icdCode}}
+                            <td>{{visitItem.treatmentProduct.name}}
                             </td>
                             <td>
                                 {{visitItem.price | number :2}}
                             </td>
-                            <td>
+                           <!-- <td>
                                 <button type="button" class="btn btn-danger btn-xs" aria-label="Left Align" ng-click="removeVisitItem($index)">
                                     <span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span>
                                 </button>
-                            </td>
+                            </td>-->
                         </tr>
                     </tbody>
                 </table>
                 <hr/>
                 <div class="row">
-                     <div class="form-group col-md-3">
-                            <label for="totalPrice">Cena całkowita</label>
-                            <input type="number" name="totalPrice" id="Number2" class="form-control" ng-model="totalPrice" />
-                        </div>
+                    <div class="form-group col-md-3">
+                        <label for="totalPrice">Cena całkowita</label>
+                        <input type="number" name="totalPrice" id="Number2" class="form-control" ng-model="newVisitCtrl.vm.totalPrice" />
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="treatment">Komentarz</label>
-                    <textarea name="comment" id="Comment" class="form-control" ng-model="comment" />
+                <div class="row">
+                   <div class="form-group">
+                        <label for="treatment">Komentarz</label>
+                        <textarea name="comment" id="Comment" class="form-control" ng-model="newVisitCtrl.vm.comment" />
+                    </div> 
                 </div>
+                
                 <br>
                 <div class="row">
                     <div class="col-md-2">
@@ -187,13 +295,13 @@
                         </table>
                     </div>
                 </div>
-                <div ng-show="error" class="alert alert-danger">{{error}}</div>
+                <div ng-show="newVisitCtrl.error" class="alert alert-danger">{{newVisitCtrl.error}}</div>
                 <div class="row">
                     <div class="form-actions col-md-1 col-md-offset-11">
-                        <button type="submit" ng-disabled="dataLoading" class="btn btn-primary" ng-click="save()">
+                        <button type="submit" ng-disabled="newVisitCtrl.dataLoading" class="btn btn-primary" ng-click="newVisitCtrl.save()">
                             <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Zapisz
                         </button>
-                        <img ng-if="dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                        <img ng-if="newVisitCtrl.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
                     </div>
                 </div>
             </div>
@@ -206,7 +314,7 @@
                         <div class="row">
                             <div class="col-sm-3">
                                 <div class="list-group">
-                                    <a ng-click="selectVisit($index)" class="list-group-item" ng-repeat="visit in visits">{{visit.date | date : 'yyyy-MM-dd HH:mm'}}</a>
+                                    <a ng-click="selectVisit($index)" class="list-group-item" ng-repeat="visit in ::visits">{{::visit.date | date : 'yyyy-MM-dd HH:mm'}}</a>
                                 </div>
                             </div>
                             <div class="col-sm-9">
@@ -214,8 +322,8 @@
                                     <b>Brak wizyt.</b>
                                 </div>
                                 <div class="jumbotron" ng-show="currentVisit">
-                                    Doktor: <b>{{currentVisit.doctorLastname}} {{currentVisit.doctorFristname}}</b><br>
-                                    Data: <b>{{currentVisit.date | date : 'yyyy-MM-dd HH:mm'}}</b><br>
+                                    Doktor: <b>{{::currentVisit.doctorLastname}} {{::currentVisit.doctorFirstname}}</b><br>
+                                    Data: <b>{{::currentVisit.date | date : 'yyyy-MM-dd HH:mm'}}</b><br>
                                     
                                     <teeth-Graph isReadonly="true" state="state" ></teeth-Graph>
 
@@ -226,21 +334,22 @@
                                                 <th>Diagnoza</th>
                                                 <th>Element</th>
                                                 <th>Leczenie</th>
+                                                <th>Produkt</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr ng-repeat="diagnoses in currentVisit.diagnoses ">
                                                 <td>{{$index + 1}}</td>
-                                                <td>{{diagnoses.description}}</td>
-                                                <td>{{diagnoses.tooth}}</td>
-                                                <td>{{diagnoses.treatmentProduct.name}}<br>
-                                                    {{diagnoses.treatmentProduct.icdCode}}
+                                                <td>{{::diagnoses.description}}</td>
+                                                <td>{{::diagnoses.tooth}}</td>
+                                                <td>{{::diagnoses.treatments}}
+                                                <td>{{::diagnoses.treatmentProduct.name}}
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                     <textarea class="form-control" ng-model="currentVisit.comment" /><br>
-                                     Całowita cena: <b>{{currentVisit.totalPrice | number :2}}</b><br>
+                                     Całowita cena: <b>{{::currentVisit.totalPrice | number :2}}</b><br>
                                 </div>
                             </div>
                         </div>
@@ -267,17 +376,17 @@
                 </div>
                 <div>
                     <hr />
-                    <div ng-repeat="survey in responsecollection">
+                    <div ng-repeat="survey in ::responsecollection">
                         <pre>
-                            Data: <b>{{survey.date | date : 'yyyy-MM-dd HH:mm'}}</b><hr>
-                            Ankieter:<b>{{survey.systemuser}}</b>
+                            Data: <b>{{::survey.date | date : 'yyyy-MM-dd HH:mm'}}</b><hr>
+                            Ankieter:<b>{{::survey.systemuserlastname}} {{::survey.systemuserfirstname}}</b>
                             <br><br/>
                             <table class="table">
                                 <tbody>
-                                    <tr ng-repeat="item in survey.responses " >
+                                    <tr ng-repeat="item in ::survey.responses " >
                                         <td ng-class="{'danger': !item.isDefault && item.priority==1, 'hover': !item.isDefault && item.priority==2,'info': !item.isDefault && item.priority==3}">{{$index + 1}}</td>
-                                        <td ng-class="{'danger': !item.isDefault && item.priority==1, 'hover': !item.isDefault && item.priority==2,'info': !item.isDefault && item.priority==3}">{{item.query}}</td>
-                                        <td ng-class="{'danger': !item.isDefault && item.priority==1, 'hover': !item.isDefault && item.priority==2,'info': !item.isDefault && item.priority==3}"><b>{{item.response}}</b></td>
+                                        <td ng-class="{'danger': !item.isDefault && item.priority==1, 'hover': !item.isDefault && item.priority==2,'info': !item.isDefault && item.priority==3}">{{::item.query}}</td>
+                                        <td ng-class="{'danger': !item.isDefault && item.priority==1, 'hover': !item.isDefault && item.priority==2,'info': !item.isDefault && item.priority==3}"><b>{{::item.response}}</b></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -353,15 +462,47 @@
                                     <th>Data dodania</th>
                                 </tr>
                             </thead>
-                            <tr ng-repeat="attachment in attachmentList " >
+                            <tr ng-repeat="attachment in ::attachmentList " >
                                 <td>{{$index + 1}}</td>
-                                <td><button type="button" class="btn btn-link"  ng-click="Download(attachment.attachmentId)" >{{attachment.name}}</button></td>
-                                <td>{{attachment.insertdate | date : 'yyyy-MM-dd HH:mm'}}</td>
+                                <td><button type="button" class="btn btn-link"  ng-click="Download(attachment.attachmentId)" >{{::attachment.name}}</button></td>
+                                <td>{{::attachment.insertdate | date : 'yyyy-MM-dd HH:mm'}}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div ng-hide="attachmentList.length">Brak załączników</div>
+                <div ng-hide="attachmentList.length"><h3>Brak załączników</h3></div>
+            </div>
+        </tab>
+        <tab heading="Oświadczenia">
+            <div class="row" ng-controller="PatientStatmentController as statmentCtrl">
+                <div class="col-md-11">
+                    <h2 class="text-center">Oświadczenia pacjenta</h2>
+                     <div ng-hide="!statmentCtrl.statmentList.length">
+                    <table class="table">
+                        <tbody>
+                            <thead>
+                                <tr>
+                                    <th>Nazwa</th>
+                                    <th>Komentarz</th>
+                                    <th>Podpisany</th>
+                                </tr>
+                            </thead>
+                            <tr ng-repeat="statment in ::statmentCtrl.statmentList " >
+                                <td>{{::statment.name}}</td>
+                                <td>{{::statment.description}}</td>
+                                <td><span ng-if="statment.signOff">Podpisany<br>
+                                        <button type="button" class="btn btn-link"  ng-click="statmentCtrl.Download(statment.statmentTemplateId)" >Pobierz</button>
+                                    </span>
+                                    <span ng-if="!statment.signOff">
+                                        <button type="button" class="btn btn-link"  ng-click="statmentCtrl.SignOff(statment.statmentTemplateId)" >Podpisz</button>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div ng-hide="statmentCtrl.statmentList.length"><h3>Brak oświadczeń</h3></div>
+                </div>
             </div>
         </tab>
 </tabset>

@@ -1,7 +1,7 @@
-'use strict';
+﻿'use strict';
 
-angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-alt', 'angularFileUpload', 'Common'])
-.controller('AddPatientController', ['$scope', '$location', 'BackendServices', 'ngDialog', '$rootScope', 'OnPeselChanged', function ($scope, $location, BackendServices, ngDialog, $rootScope, OnPeselChanged) {
+angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-alt', 'angularFileUpload','Common'])
+.controller('AddPatientController', ['$scope', '$location', '$http', 'ngDialog', '$rootScope', 'OnPeselChanged', 'ApiAdress', function ($scope, $location, $http, ngDialog, $rootScope, OnPeselChanged, ApiAdress) {
     $scope.error = null;
     $scope.surveyQuestionLoading = true;
     $scope.isEdit = false;
@@ -12,7 +12,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
         OnPeselChanged($scope);
     };
 
-    $scope.OnCountryChange = function(item) {
+    $scope.OnCountryChange = function (item) {
         if (undefined != item && undefined != item.originalObject) {
             $scope.country = $scope.newtreatment.originalObject.name;
         };
@@ -30,7 +30,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
         }
         $scope.dataLoading = true;
 
-        BackendServices.addPatient( {
+        $http.post(ApiAdress + '/patient/add', {
             person: {
                 lastname: $scope.lastname,
                 firstname: $scope.firstname,
@@ -75,7 +75,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
         }
     };
 }])
-.controller('PatientEditController', ['$scope', '$location', 'BackendServices', 'ngDialog', '$routeParams', 'OnPeselChanged', function ($scope, $location, BackendServices, ngDialog, $routeParams, OnPeselChanged) {
+.controller('PatientEditController', ['$scope', '$location', '$http', 'ngDialog', '$routeParams', 'OnPeselChanged', 'ApiAdress', function ($scope, $location, $http, ngDialog, $routeParams, OnPeselChanged, ApiAdress) {
     $scope.error = null;
     $scope.isEdit = true;
     $scope.validationError = false;
@@ -87,14 +87,14 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
             OnPeselChanged($scope);
         }
     });
-    
+
     $scope.OnCountryChange = function (item) {
         if (undefined != item && undefined != item.originalObject) {
             $scope.country = $scope.newtreatment.originalObject.name;
         };
     };
 
-    BackendServices.getPatientDetails($routeParams.patientId).success(function (data, status, headers, config) {
+    $http.get(ApiAdress + '/patient/' + $routeParams.patientId + '/details').success(function (data, status, headers, config) {
         // this callback will be called asynchronously
         $scope.lastname = data.lastname;
         $scope.firstname = data.firstname;
@@ -122,7 +122,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
         }
         $scope.dataLoading = true;
 
-        BackendServices.editPatient($routeParams.patientId, {
+        $http.post(ApiAdress + '/patient/' + $routeParams.patientId + '/update', {
             person: {
                 lastname: $scope.lastname,
                 firstname: $scope.firstname,
@@ -183,12 +183,12 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
 
     };
 }])
-.controller('VisitHistoryController', ['$scope', '$routeParams', 'BackendServices', function ($scope, $routeParams, BackendServices) {
+.controller('VisitHistoryController', ['$scope', '$routeParams', '$http', 'ApiAdress', function ($scope, $routeParams, $http, ApiAdress) {
     console.log($routeParams);
     $scope.visitHistoryLoading = true;
     $scope.currentVisit = null;
     $scope.isReadonly = true;
-    BackendServices.getVisitHistory($scope.patientId).success(function (data, status, headers, config) {
+    $http.get(ApiAdress + '/visit/' + $scope.patientId + '/patient').success(function (data, status, headers, config) {
         $scope.visitHistoryLoading = false;
         $scope.visits = data;
         if (undefined != data[0]) {
@@ -205,12 +205,12 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
         $scope.state = $scope.currentVisit.teethGraph;
     };
 }])
-.controller('NewSurveyController', ['$scope', '$routeParams', 'BackendServices', '$location', function ($scope, $routeParams, BackendServices, $location) {
+.controller('NewSurveyController', ['$scope', '$routeParams', '$http', '$location', 'ApiAdress', function ($scope, $routeParams, $http, $location, ApiAdress) {
     console.log($routeParams);
     $scope.patientLoading = true;
     $scope.surveyLoading = true;
 
-    BackendServices.getPatientDetails($routeParams.patientId)
+    $http.get(ApiAdress + '/patient/' + $routeParams.patientId + '/details')
         .success(function (data, status, headers, config) {
             $scope.patient = data;
             $scope.patientLoading = false;
@@ -221,7 +221,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
 
     $scope.changeSelectedSurvey = function () {
         $scope.surveyLoading = true;
-        BackendServices.getSurveyDetails($scope.currentSurveyId)
+        $http.get(ApiAdress + '/survey/' + $scope.currentSurveyId + '/detail')
                .success(function (data, status, headers, config) {
                    $scope.currentSurveyDetails = data;
                    // create respons table
@@ -240,7 +240,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
                });
     };
 
-    BackendServices.getAllSurvey()
+    $http.get(ApiAdress + '/survey/all')
         .success(function (data, status, headers, config) {
             $scope.surveyList = data;
             $scope.surveyLoading = false;
@@ -257,7 +257,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
 
 
     $scope.save = function () {
-        BackendServices.savePatientResponse( $routeParams.patientId , $scope.responses)
+        $http.post(ApiAdress + '/survey/' + $routeParams.patientId + '/save/response', $scope.responses)
         .success(function () {
             if (null == $routeParams.invokView || '' == $routeParams.invokeView || 'h' == $routeParams.invokeView) {
                 $location.path('/');
@@ -272,7 +272,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
     $scope.cancel = function () {
         ngDialog.openConfirm({
             template: '\
-                <p>Czy na pewno zako�czy� edycj� bez zapisywania ? </p>\
+                <p>Czy na pewno zakończyć edycję bez zapisywania ? </p>\
                 <div class="ngdialog-buttons">\
                     <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog(0)">Nie</button>\
                     <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Tak</button>\
@@ -288,7 +288,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
     };
 
 }])
-.controller('VisitResponseSurveyController', ['$scope', '$routeParams', 'BackendServices', '$location', function ($scope, $routeParams, BackendServices, $location) {
+.controller('VisitResponseSurveyController', ['$scope', '$routeParams', '$http', '$location', 'ApiAdress', function ($scope, $routeParams, $http, $location, ApiAdress) {
     $scope.patientId = $routeParams.patientId;
     $scope.dataLoading = true;
 
@@ -296,7 +296,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
         $location.path('/patient/' + $scope.patientId + '/newsurvey');
     };
 
-    BackendServices.getPatientResponse($routeParams.patientId).success(function (data, status, headers, config) {
+    $http.get(ApiAdress + '/survey/' + $routeParams.patientId + '/responses').success(function (data, status, headers, config) {
         $scope.responsecollection = data;
         $scope.dataLoading = false;
     }).error(function (data, status, headers, config) {
@@ -306,186 +306,335 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
 
 
 }])
-.controller('PatientVisitController', ['$scope', '$routeParams', 'BackendServices', '$location', '$rootScope', 'Interaction', function ($scope, $routeParams, BackendServices, $location, $rootScope, Interaction) {
-    console.log($routeParams);
-    $scope.dataLoading = true;
-    $scope.visitHistoryLoading = true;
-    $scope.surveyResponsesLoading = true;
-    $scope.visitRecords = [];
-    $scope.patientId = $routeParams.patientId;
-    $scope.newdiagnoze = '';
-    $scope.currentVisit = null;
+.controller('PatientVisitController', ['$scope',
+                                        '$routeParams',
+                                        '$http',
+                                        '$location',
+                                        '$rootScope',
+                                        'Interaction',
+                                        'DiagnoseTemplateAPI',
+                                        'TreatmentProductAPI',
+                                        'TreatmentAPI','ApiAdress',
+                                        function ($scope, $routeParams,
+                                                    $http, $location,
+                                                    $rootScope, Interaction,
+                                                    DiagnoseTemplateAPI, TreatmentProductAPI, TreatmentAPI, ApiAdress) {
+                                            console.log($routeParams);
+                                            $scope.dataLoading = true;
+                                            $scope.visitHistoryLoading = true;
+                                            $scope.surveyResponsesLoading = true;
+                                            $scope.visitRecords = [];
+                                            $scope.patientId = $routeParams.patientId;
+                                            $scope.newdiagnoze = '';
+                                            $scope.currentVisit = null;
 
-    $scope.createSurvey = function () {
-        $location.path('/patient/' + $scope.patientId + '/newsurvey/v');
-    };
+                                            $scope.createSurvey = function () {
+                                                $location.path('/patient/' + $scope.patientId + '/newsurvey/v');
+                                            };
 
-    $scope.back = function () {
-        if ($scope.visitRecords.length > 0) {
-            Interaction.ShowConfimation('Czy na pewno chcesz zakończyć bez zapisywania zmian?', 'Tak', 'Nie', function () {
-                $location.path('/');
-            }, function () {
-            });
-        } else {
-            $location.path('/');
-        }
-    };
+                                            $scope.back = function () {
+                                                if ($scope.visitRecords.length > 0) {
+                                                    Interaction.ShowConfimation('Czy na pewno chcesz zakończyć bez zapisywania zmian?', 'Tak', 'Nie', function () {
+                                                        $location.path('/');
+                                                    }, function () {
+                                                    });
+                                                } else {
+                                                    $location.path('/');
+                                                }
+                                            };
 
-    BackendServices.getPatientResponse($routeParams.patientId).success(function (data, status, headers, config) {
-        $scope.responsecollection = data;
-        $scope.surveyResponsesLoading = false;
-    }).error(function (data, status, headers, config) {
-        $scope.error = 'Wystapil blad ladowaniadanych odpowiedzi pacjenta';
-        $scope.surveyResponsesLoading = false;
-    });
+                                            $http.get(ApiAdress + '/survey/' + $routeParams.patientId + '/responses').success(function (data, status, headers, config) {
+                                                $scope.responsecollection = data;
+                                                $scope.surveyResponsesLoading = false;
+                                            }).error(function (data, status, headers, config) {
+                                                $scope.error = 'Wystapil blad ladowaniadanych odpowiedzi pacjenta';
+                                                $scope.surveyResponsesLoading = false;
+                                            });
 
-    BackendServices.getVisitHistory($routeParams.patientId).success(function (data, status, headers, config) {
-        $scope.visits = data;
-        $scope.currentVisit = data[0];
-        $scope.visitHistoryLoading = false;
-    }).error(function (data, status, headers, config) {
-        $scope.error = 'Wystapil blad podczas pobierania listy wizyt pacjenta';
-        $scope.visitHistoryLoading = false;
-    });
+                                            $http.get(ApiAdress + '/visit/' + $routeParams.patientId + '/patient').success(function (data, status, headers, config) {
+                                                $scope.visits = data;
+                                                $scope.currentVisit = data[0];
+                                                $scope.visitHistoryLoading = false;
+                                            }).error(function (data, status, headers, config) {
+                                                $scope.error = 'Wystapil blad podczas pobierania listy wizyt pacjenta';
+                                                $scope.visitHistoryLoading = false;
+                                            });
 
-    $scope.selectVisit = function (index) {
-        $scope.currentVisit = $scope.visits[index];
-    };
+                                            $scope.selectVisit = function (index) {
+                                                $scope.currentVisit = $scope.visits[index];
+                                            };
 
-    $scope.editPatient = function (patientId) {
-        $location.path('/patient/' + patientId + '/edit/v');
-    };
+                                            $scope.editPatient = function (patientId) {
+                                                $location.path('/patient/' + patientId + '/edit/v');
+                                            };
 
-    BackendServices.getPatientDetails($routeParams.patientId).success(function (data, status, headers, config) {
-        // this callback will be called asynchronously
-        $scope.patient = data;
-        $scope.dataLoading = false;
-    }).error(function (data, status, headers, config) {
-        $scope.error = 'Wystapil blad ladowaniadanych pacjenta';
-        $scope.false = false;
-    });
+                                            $http.get(ApiAdress + '/patient/' + $routeParams.patientId + '/details').success(function (data, status, headers, config) {
+                                                // this callback will be called asynchronously
+                                                $scope.patient = data;
+                                                $scope.dataLoading = false;
+                                            }).error(function (data, status, headers, config) {
+                                                $scope.error = 'Wystapil blad ladowaniadanych pacjenta';
+                                                $scope.false = false;
+                                            });
 
-}])
-.controller('CreateNewVisitController', ['$scope', '$routeParams', 'BackendServices', '$location', '$rootScope', 'ToothElement', 'FileUploader', function ($scope, $routeParams, BackendServices, $location, $rootScope, ToothElement, FileUploader) {
-    $scope.newdiagnoze = '';
-    $scope.state = [];
-    $scope.totalPrice = 0;
-    $scope.newtreatment = '';
-    
-    $scope.OnTreatmentChange = function (newItem) {
-        $scope.newtreatment = newItem;
-        if (undefined != $scope.newtreatment && undefined != $scope.newtreatment.originalObject) {
-            $scope.newPrice = $scope.newtreatment.originalObject.defaultPrice;
-        };
-    };
-    
-    $scope.$parent.$watch('patient', function (newVal, oldVal) {
-        if (undefined == $scope.$parent || null == $scope.$parent ||
-            undefined == $scope.$parent.patient || null == $scope.$parent.patient ||
-            undefined == $scope.$parent.patient.teethGraph || null == $scope.$parent.patient.teethGraph) {
-            return;
-        }
-        $scope.state = $scope.$parent.patient.teethGraph;
-    });
+                                        }])
+.controller('CreateNewVisitController', ['$scope',
+                                            '$routeParams',
+                                            '$http',
+                                            '$location',
+                                            '$rootScope',
+                                            'ToothElement',
+                                            'FileUploader',
+                                            'DiagnoseTemplateAPI',
+                                            'TreatmentProductAPI',
+                                            'TreatmentAPI', 'DateFormatter','PayerList','ApiAdress',
+                                            function ($scope, $routeParams,
+                                                        $http, $location,
+                                                        $rootScope, ToothElement,
+                                                        FileUploader, DiagnoseTemplateAPI,
+                                                        TreatmentProductAPI, TreatmentAPI, DateFormatter, PayerList, ApiAdress) {
+                                                var self = this;
+                                                self.vm = {
+                                                    diagnoses: [{
+                                                        treatments: [],
+                                                        treatmentProducts: [],
+                                                    }],
+                                                    visitDate: new Date(),
+                                                    visitStartTime: new Date(),
+                                                    visitPayer: 0,
+                                                    patientId: $routeParams.patientId,
+                                                    doctorId: $rootScope.globals.currentUser.doctorid,
+                                                    comment: null,
+                                                    totalPrice: 0,
+                                                };
+                                                self.dataLoading = false;
+                                                self.error = null;
 
-    $scope.visitRecords = [];
-    $scope.attachemntId = [];
+                                                $scope.newdiagnoze = '';
+                                                self.state = [];
+                                                self.visitRecords = [];
 
-    $scope.element = ToothElement;
+                                                $scope.newtreatment = '';
 
-    var uploader = $scope.uploader = new FileUploader({
-        url: '/attachment/add/' + $scope.patientId
-    });
+                                                self.Template = {
+                                                    diagnoseTemplate: [],
+                                                    treatments: [],
+                                                    treatmentProducts: [],
+                                                    elements: ToothElement,
+                                                };
 
-    // FILTERS
+                                                self.payerList = PayerList;
 
-    uploader.filters.push({
-        name: 'customFilter',
-        fn: function (item /*{File|FileLikeObject}*/, options) {
-            return this.queue.length < 10;
-        }
-    });
+                                                self.status = {
+                                                    opened: false
+                                                };
 
-    uploader.onAfterAddingAll = function (addedFileItems) {
-        console.info('onAfterAddingAll', addedFileItems);
-        addedFileItems.forEach(function (file) {
-            file.upload();
-        });
-    };
+                                                self.dateOptions = {
+                                                    formatYear: 'yyyy',
+                                                    startingDay: 1
+                                                };
 
-    uploader.onCompleteItem = function (fileItem, response, status, headers) {
-        console.info('onCompleteItem', fileItem, response, status, headers);
-        if (undefined == response || undefined == response.attachemntId) {
-            return;
-        }
-        $scope.attachemntId.push(response.attachemntId);
-    };
+                                                self.open = function ($event) {
+                                                    self.status.opened = true;
+                                                };
 
-    $scope.addNewDiagnoze = function () {
-        if (null == $scope.newtreatment || '' == $scope.newtreatment) {
-            return;
-        }
-        var newObject = {
-            description: $scope.newdiagnoze,
-            treatmentProduct: $scope.newtreatment.originalObject,
-            tooth: $scope.selectedTooth == '' || $scope.selectedTooth == null ? '' : $scope.selectedTooth.originalObject,
-            price: $scope.newPrice
-        };
-        $scope.visitRecords.push(newObject);
-        $scope.newdiagnoze = null;
+                                                self.Actions = {
+                                                    RemoveDiagnose: function (index) {
+                                                        console.log('remove diagnose');
 
-        $scope.$broadcast('angucomplete-alt:clearInput', 'treatment');
-        $scope.$broadcast('angucomplete-alt:clearInput', 'tooth');
+                                                        self.vm.diagnoses.splice(index, 1);
+                                                    },
+                                                    AddDiagnose: function () {
+                                                        console.log('add new diagnose');
+                                                        self.vm.diagnoses.push({ treatments: [], treatmentProducts: [] });
+                                                    },
+                                                    AddTreatment: function (diagnoseIndex) {
+                                                        console.log('add new treatment');
+                                                        if (self.vm.diagnoses[diagnoseIndex].treatments) {
+                                                            self.vm.diagnoses[diagnoseIndex].treatments.push({});
+                                                        } else {
+                                                            self.vm.diagnoses[diagnoseIndex].treatments = [{}];
+                                                        }
 
-        //refresh
-        $scope.totalPrice = $scope.totalPrice + $scope.newPrice;
-        $scope.newPrice = null;
+                                                    },
+                                                    RemoveTreatment: function (diagnoseIndex, treatmentIndex) {
+                                                        console.log('remove treatment');
+                                                        self.vm.diagnoses[diagnoseIndex].treatments.splice(treatmentIndex, 1);
+                                                    },
+                                                    AddTreatmentProduct: function (diagnoseIndex) {
+                                                        console.log('add new treatment');
+                                                        if (self.vm.diagnoses[diagnoseIndex].treatmentProducts) {
+                                                            self.vm.diagnoses[diagnoseIndex].treatmentProducts.push({});
+                                                        } else {
+                                                            self.vm.diagnoses[diagnoseIndex].treatmentProducts = [{}];
+                                                        }
+                                                    },
+                                                    RemoveTreatmentProduct: function (diagnoseIndex, treatmentIndex) {
+                                                        console.log('remove treatment');
+                                                        self.vm.diagnoses[diagnoseIndex].treatmentProducts.splice(treatmentIndex, 1);
+                                                    },
+                                                };
 
-    };
+                                                self.OnSelectedElement = function (selected) {
+                                                    if (selected) {
+                                                        if (selected.originalObject) {
+                                                            console.log(selected.originalObject);
+                                                            var id = this.id.substring(12, this.id.length);
+                                                            self.vm.diagnoses[id].element = selected.originalObject;
+                                                        }
+                                                    } else {
 
-    $scope.removeVisitItem = function (index) {
-        $scope.totalPrice = $scope.totalPrice - $scope.visitRecords[index].price;
-        $scope.visitRecords.splice(index, 1);
-    };
+                                                    }
+                                                };
+
+                                                self.OnDiagnoseTemplateChange = function (selected) {
+                                                    if (selected) {
+                                                        if (selected.originalObject) {
+                                                            console.log(selected.originalObject);
+                                                            var id = this.id.substring(13, this.id.length);
+                                                            self.vm.diagnoses[id].description = selected.originalObject.diagnose;
+                                                            self.vm.diagnoses[id].isElementRequired = selected.originalObject.isElementRequired;
+                                                            self.vm.diagnoses[id].element = null;
+                                                            var elementId = 'element-alt-' + id;
+                                                            $scope.$broadcast('angucomplete-alt:changeInput', elementId, selected.originalObject.defaultElement);
+                                                            self.vm.diagnoses[id].treatments = [];
+                                                            self.vm.diagnoses[id].treatmentProducts = [];
+                                                            for (var i = 0; i < selected.originalObject.treatments.length; i++) {
+                                                                self.vm.diagnoses[id].treatments.push(selected.originalObject.treatments[i]);
+                                                                //var elementId = 'treatment-' + id + '-' + i;
+                                                                //$scope.$broadcast('angucomplete-alt:changeInput', elementId, selected.originalObject.treatments[i]);
+                                                            }
+                                                            for (var j = 0; j < selected.originalObject.treatmentProducts.length; j++) {
+                                                                var treatmentProducts = selected.originalObject.treatmentProducts[j];
+                                                                treatmentProducts.price = self.Template.treatmentProducts.find(function(element) {
+                                                                    return element.id === treatmentProducts.treatmentProductId;
+                                                                });
+                                                                self.vm.diagnoses[id].treatmentProducts.push(treatmentProducts);
+                                                            }
+                                                        }
+                                                    } else {
+
+                                                    }
+                                                };
+
+                                                self.OnTreatmentProductChange = function (selected) {
+                                                    if (selected) {
+                                                        self.vm.diagnoses[$index].treatmentProducts.price = selected.originalObject.defaultPrice;
+                                                        self.vm.totalPrice = 0;
+                                                        for (var i = 0; i < self.vm.diagnoses.length; i++) {
+                                                            for (var j = 0; j < self.vm.diagnoses[$index].treatmentProducts.length; j++) {
+                                                                self.vm.totalPrice = self.vm.totalPrice + self.vm.diagnoses[$index].treatmentProducts.price;
+                                                            }
+                                                        }
+                                                    } else {
+
+                                                    }
+                                                };
 
 
+                                                TreatmentAPI.GetTreatmentList().success(function (data) {
+                                                    self.Template.treatments = data;
+                                                }).error(function () {
+                                                    console.log('Wystąpił błąd podczas pobierania listy leczeń');
+                                                });
 
-    $scope.save = function () {
-        $scope.dataLoading = true;
-        $scope.error = null;
-        BackendServices.addVisit(
-        {
-            patientId: $routeParams.patientId,
-            doctorId: $rootScope.globals.currentUser.doctorid,
-            diagnoses: $scope.visitRecords.map(function (v) {
-                return {
-                    treatmentProductId: v.treatmentProduct.id,
-                    description: v.description,
-                    tooth: v.tooth.id
-                };
-            }),
-            attachments: $scope.attachemntId.map(function (v) {
-                return {
-                    attachmentId: v,
-                    insertDate: new Date(),
-                };
-            }),
-            CalendarEvent: {
-                start:new Date(),
-            },
-            teethgraph: JSON.stringify($scope.state),
-            comment: $scope.comment,
-            totalprice: $scope.totalPrice
-        }).success(function (data, status, headers, config) {
-            $location.path('/');
-            console.log('saved successful');
-        }).error(function (data, status, headers, config) {
-            $scope.error = 'Wystapil blad podczas zapisywania wizyty';
-            $scope.dataLoading = false;
-        });
-    };
-}])
-.controller('CommunicationController', ['$scope', '$routeParams', 'BackendServices', function ($scope, $routeParams, BackendServices) {
+                                                DiagnoseTemplateAPI.GetDiagnoseTemplate().success(function (data) {
+                                                    self.Template.diagnoseTemplate = data;
+                                                }).error(function () {
+                                                    console.log('Cant get diagnose template list');
+                                                });
+
+                                                TreatmentProductAPI.GetTreatmentProductList().success(function (data) {
+                                                    self.Template.treatmentProducts = data;
+                                                }).error(function () {
+                                                    console.log('cant load treatment product');
+                                                });
+
+
+                                                $scope.$parent.$watch('patient', function (newVal, oldVal) {
+                                                    if (undefined == $scope.$parent || null == $scope.$parent ||
+                                                        undefined == $scope.$parent.patient || null == $scope.$parent.patient ||
+                                                        undefined == $scope.$parent.patient.teethGraph || null == $scope.$parent.patient.teethGraph) {
+                                                        return;
+                                                    }
+                                                    self.state = $scope.$parent.patient.teethGraph;
+                                                });
+
+                                                $scope.attachemntId = [];
+
+                                                var uploader = $scope.uploader = new FileUploader({
+                                                    url: '/attachment/add/' + self.vm.patientId
+                                                });
+
+                                                // FILTERS
+
+                                                uploader.filters.push({
+                                                    name: 'customFilter',
+                                                    fn: function (item /*{File|FileLikeObject}*/, options) {
+                                                        return this.queue.length < 10;
+                                                    }
+                                                });
+
+                                                uploader.onAfterAddingAll = function (addedFileItems) {
+                                                    console.info('onAfterAddingAll', addedFileItems);
+                                                    addedFileItems.forEach(function (file) {
+                                                        file.upload();
+                                                    });
+                                                };
+
+                                                uploader.onCompleteItem = function (fileItem, response, status, headers) {
+                                                    console.info('onCompleteItem', fileItem, response, status, headers);
+                                                    if (undefined == response || undefined == response.attachemntId) {
+                                                        return;
+                                                    }
+                                                    $scope.attachemntId.push(response.attachemntId);
+                                                };
+                                                
+                                                self.save = function () {
+                                                    self.dataLoading = true;
+                                                    self.error = null;
+                                                    var visitStartTime = new Date(self.vm.visitStartTime);
+                                                    var visitDate = self.vm.visitDate;
+                                                    var startDateTime = DateFormatter.format(visitDate.setHours(visitStartTime.getHours(), visitStartTime.getMinutes()));
+                                                    $http.post(ApiAdress + '/visit/add',
+                                                    {
+                                                        patientId: self.vm.patientId,
+                                                        doctorId: self.vm.doctorId,
+                                                        visitPayer: self.vm.visitPayer,
+                                                        diagnoses: self.vm.diagnoses.map(function (v) {
+                                                            return {
+                                                                treatmentProductId: (v.treatmentProducts) ? v.treatmentProducts.id : null,
+                                                                treatments: v.treatments,
+                                                                description: v.description,
+                                                                tooth: (v.element) ? v.element.id : null,
+                                                            };
+                                                        }),
+                                                        attachments: $scope.attachemntId.map(function (v) {
+                                                            return {
+                                                                attachmentId: v,
+                                                                insertDate: new Date(),
+                                                            };
+                                                        }),
+                                                        CalendarEvent: {
+                                                            start: startDateTime,
+                                                            end: new Date(),
+                                                            IsRecurence: false,
+                                                            RecurenceRule: {}
+                                                        },
+                                                        teethgraph: JSON.stringify(self.state),
+                                                        comment: self.vm.comment,
+                                                        totalprice: self.vm.totalPrice
+                                                    }).success(function (data, status, headers, config) {
+                                                        $location.path('/');
+                                                        console.log('saved successful');
+                                                    }).error(function (data, status, headers, config) {
+                                                        self.error = 'Wystapil blad podczas zapisywania wizyty';
+                                                        self.dataLoading = false;
+                                                    });
+                                                };
+
+                                            }])
+.controller('CommunicationController', ['$scope', '$routeParams', '$http', 'ApiAdress', function ($scope, $routeParams, $http, ApiAdress) {
     $scope.dataLoading = true;
 
     $scope.$parent.$watch('patient', function (newVal, oldVal) {
@@ -518,7 +667,7 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
     $scope.Send = function () {
         $scope.dataLoading = true;
         $scope.error = null;
-        BackendServices.sendMessage(
+        $http.post(ApiAdress + '/message/send',
             {
                 messageType: $scope.messageType.id,
                 header: $scope.header,
@@ -535,11 +684,11 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
             });
     };
 }])
-.controller('PatientAttachmentController', ['$scope', '$routeParams', 'BackendServices', function ($scope, $routeParams, BackendServices) {
+.controller('PatientAttachmentController', ['$scope', '$routeParams', '$http', 'ApiAdress', function ($scope, $routeParams, $http, ApiAdress) {
     $scope.dataLoading = true;
     $scope.attachmentDownload = false;
 
-    BackendServices.getPatientAttachment( $scope.patientId).success(function (data) {
+    $http.get(ApiAdress + '/attachment/patient/' + $scope.patientId).success(function (data) {
         $scope.dataLoading = false;
         $scope.attachmentList = data;
     }).error(function () {
@@ -554,18 +703,46 @@ angular.module('Patient', ['ngDialog', 'ui.bootstrap', 'ngTouch', 'angucomplete-
         }
         $scope.attachmentDownload = true;
         $scope.error = null;
-        BackendServices.downloadAttachment( id).success(function (data) {
+        var filename = $scope.attachmentList.filter(function (item) {
+            return item.id === id;
+        })[0].name;
+        $http.get(ApiAdress + '/attachment/' + id + '/preview').then(function (response) {
             $scope.attachmentDownload = false;
             var anchor = angular.element('<a/>');
             anchor.attr({
-                href: 'data:attachment/csv;charset=utf-8,' + encodeURI(data),
+                href: 'data:attachment/csv;charset=utf-8,' + encodeURI(response.data),
                 target: '_blank',
-                download: 'filename.csv'
+                download: filename
             })[0].click();
 
-        }).error(function () {
+        }, function () {
             $scope.attachmentDownload = false;
             $scope.error = 'Wystąpił błąd podczas pobierania załącznika';
         });
     };
-}]);
+}])
+    .controller('PatientStatmentController', ['$routeParams', '$http', '$location', 'ApiAdress', function ($routeParams, $http, $location, ApiAdress) {
+        var self = this;
+        self.loading = true;
+        self.error = null;
+        $http.get(ApiAdress + '/patientstatment/' + $routeParams.patientId + '/list').then(function (response) {
+            self.loading = false;
+            self.error = null;
+            self.statmentList = response.data;
+        }, function () {
+            self.loading = false;
+            self.error = null;
+        });
+
+        self.Download = function (id) {
+            ///TODO download
+            console.log(id);
+            $location.path('/previewstatmentsignoff/' + id + '/' + $routeParams.patientId + '/e');
+        };
+
+        self.SignOff = function (id) {
+            console.log(id);
+            $location.path('/statmentsignoff/' + id + '/' + $routeParams.patientId + '/e');
+        };
+
+    }]);
