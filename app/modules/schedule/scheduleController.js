@@ -128,7 +128,7 @@ angular.module('Schedule', ['ngDialog', 'ui.calendar', 'ui.bootstrap', 'Common']
     /* event sources array*/
     $scope.eventSources = [$scope.events, $scope.eventSource, $scope.eventsF];
 }])
-.controller('CreateScheduleController', ['$scope', 'LocationService', '$http', 'uiCalendarConfig', 'DateFormatter', 'ApiAdress', function ($scope, LocationService, $http, uiCalendarConfig, DateFormatter, ApiAdress) {
+.controller('CreateScheduleController', ['$scope', 'LocationService', '$http', 'uiCalendarConfig', 'DateFormatter', 'ApiAdress', 'DoctorAPI', function ($scope, LocationService, $http, uiCalendarConfig, DateFormatter, ApiAdress, DoctorAPI) {
     $scope.error = null;
     $scope.dataLoading = false;
     $scope.doctorLoading = false;
@@ -144,6 +144,12 @@ angular.module('Schedule', ['ngDialog', 'ui.calendar', 'ui.bootstrap', 'Common']
         start: new Date(),
     });
     // TODO replace
+    DoctorAPI.getDoctorList().success(function(data){
+    	$scope.doctors = data;
+	$scope.doctorLoading = false;
+    }).error(function(){
+	$scope.doctorLoading = false;
+    });
     $scope.doctors = [
   { name: "Urszula Korzeniowska", description: "Stomatolog", id: 1 },
   { name: "Joanna Dąbrowicz", description: "Stomatolog", id: 2 }

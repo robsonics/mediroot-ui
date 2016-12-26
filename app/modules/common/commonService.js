@@ -1,7 +1,7 @@
 ﻿angular.module('Common', ['ngDialog'])
     //.constant('ApiAdress','http://192.168.1.120:8081')
-    /.constant('ApiAdress','http://localhost:8081')
-    .constant('ApiAdress','http://192.168.1.104:8081')
+    //.constant('ApiAdress','http://localhost:8081')
+    .constant('ApiAdress','http://192.168.0.104:8081')
     .factory('ToothElement', function () {
         return [
             { id: '00', name: 'Całość' },
@@ -232,4 +232,11 @@
                 { id: 1, name: 'NFZ' },
                 { id: 2, name: 'PZU' },
                 { id: 3, name: 'Medpolonia' }];
+    }])
+    .factory('DoctorAPI',['$http', 'ApiAdress', function($http, ApiAdress){
+	return {
+		getDoctorList: function(){
+			return $http.get(ApiAdress + '/user/doctor/list', {cache: true});
+		}
+	}
     }]);
