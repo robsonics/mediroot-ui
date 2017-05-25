@@ -1,0 +1,29 @@
+<div class="row" ng-controller="PatientStatmentController as statmentCtrl">
+                <div class="col-md-11">
+                    <h2 class="text-center">Oświadczenia pacjenta</h2>
+                     <div ng-hide="!statmentCtrl.statmentList.length">
+                    <table class="table">
+                        <tbody>
+                            <thead>
+                                <tr>
+                                    <th>Nazwa</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tr ng-repeat="statment in ::statmentCtrl.statmentList " >
+                                <td><b>{{::statment.name}}</b><br>
+				    {{::statment.description}}</td>
+                                <td><span ng-if="statment.signOff">Podpisany<br>
+                                        <button type="button" class="btn btn-link"  ng-click="statmentCtrl.Download(statment.statmentTemplateId)" >Pobierz</button>
+                                    </span>
+                                    <span ng-if="!statment.signOff">
+                                        <button type="button" class="btn btn-link"  ng-click="statmentCtrl.SignOff(statment.statmentTemplateId)" >Podpisz</button>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div ng-hide="statmentCtrl.statmentList.length"><h3>Brak oświadczeń</h3></div>
+                </div>
+            </div>

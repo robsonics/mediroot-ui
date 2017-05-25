@@ -1,0 +1,23 @@
+<div ng-controller="PatientAttachmentController as attachmentCtrl">
+    <h2>Załączniki</h2>
+    <div ng-show="attachmentCtrl.error" class="alert alert-danger">{{attachmentCtrl.error}}</div>
+    <div ng-hide="!attachmentCtrl.attachmentList.length">
+        <table class="table">
+            <tbody>
+                <thead>
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Data dodania</th>
+                    </tr>
+                </thead>
+                <tr ng-repeat="attachment in ::attachmentCtrl.attachmentList" >
+                    <td><a type="button" class="btn btn-link"  ng-click="attachmentCtrl.Download(attachment.attachmentId)" >{{::attachment.name}}
+                        download="{{::attachment.name}}"
+                        </a></td>
+                    <td>{{::attachment.insertdate | date : 'yyyy-MM-dd HH:mm'}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div ng-hide="attachmentCtrl.attachmentList.length"><h3>Brak załączników</h3></div>
+</div>

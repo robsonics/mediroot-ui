@@ -1,0 +1,235 @@
+<div ng-controller="CreateNewVisitController as newVisitCtrl">
+    <div class="row center-row">
+        <div class="col-md-1 text-align-right">Płatnik:</div>
+        <div class="col-md-3">
+            <select ng-model="newVisitCtrl.vm.visitPayer"
+                    ng-options="item.id as item.name for item in newVisitCtrl.payerList">
+            </select>
+        </div>
+        <div class="col-md-2 text-align-right">Data wizyty:</div>
+        <div class="col-md-2">
+            <p class="input-group" style="margin-top: 12px;">
+                <input type="text" class="form-control" datepicker-popup ng-model="newVisitCtrl.vm.visitDate" is-open="newVisitCtrl.status.opened" datepicker-options="newVisitCtrl.dateOptions" close-text="Zamknij" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="newVisitCtrl.open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+        <div class="col-md-3">
+            <uib-timepicker ng-model="newVisitCtrl.vm.visitStartTime" hour-step="1" minute-step="10" show-meridian="false"></uib-timepicker>
+        </div>
+    </div>
+    <teeth-Graph isReadonly="false" state="newVisitCtrl.state" width="1050"></teeth-Graph>
+    <form name="form" ng-submit="newVisitCtrl.addNewDiagnoze()" role="form">
+        <div ng-repeat="diagnose in newVisitCtrl.vm.diagnoses" class="shadow-z-1 diagnose-box">
+            <div class="row">
+
+                <div class="form-group col-md-offset-1 col-md-7">
+                    <label for="diagnoze">{{$index+1}}. Diagnoza</label>
+                    <angucomplete-alt id="Diagnose-alt-{{$index}}"
+                                      minlength="1"
+                                      selected-object="newVisitCtrl.OnDiagnoseTemplateChange"
+                                      local-data="newVisitCtrl.Template.diagnoseTemplate"
+                                      search-fields="diagnose"
+                                      title-field="diagnose"
+                                      input-class="form-control form-control-small"
+                                      match-class="highlight"
+                                      override-suggestions="true"
+                                      clear-selected="true"/>
+                </div>
+                <div class="form-group  col-md-3">
+                    <label for="tooth-{{$index}}">Element</label>   
+                    <angucomplete-alt id="element-alt-{{$index}}"
+                                      minlength="1"
+                                      selected-object="newVisitCtrl.OnSelectedElement"
+                                      local-data="newVisitCtrl.Template.elements"
+                                      search-fields="name,id"
+                                      title-field="name"
+                                      description-field="id"
+                                      input-class="form-control form-control-small"
+                                      match-class="highlight"
+                                      field-required="newVisitCtrl.vm.diagnoses[$index].isElementRequired"
+                                      override-suggestions="true"
+                                      clear-selected="true"/>
+                </div>
+                <div class="form-group col-md-1">
+                    <button class="btn btn-xs btn-danger remove-btn" ng-click="newVisitCtrl.Actions.RemoveDiagnose($index)" ng-disabled="newVisitCtrl.vm.diagnoses.length<=1" >
+                        <span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="row" ng-repeat="treatment in newVisitCtrl.vm.diagnoses[$index].treatments">
+                <div class="form-group col-md-9 col-md-offset-2">
+                    <label for="treatment">{{$parent.$index+1}}.{{$index+1}}. Leczenie</label>
+                    <angucomplete-alt id="treatment-{{$parent.$index}}-{{$index}}"    
+                                      minlength="1"                                              
+                                      selected-object="newVisitCtrl.OnTreatmentChange"
+                                      local-data="newVisitCtrl.Template.treatments"
+                                      search-fields="name"
+                                      title-field="name"
+                                      initial-value="newVisitCtrl.vm.diagnoses[$parent.$index].treatments[$index]"
+                                      input-class="form-control form-control-small"/>
+                </div>
+                <div class="form-group col-md-1">
+                    <button class="btn btn-xs btn-danger remove-btn" ng-click="newVisitCtrl.Actions.RemoveTreatment($parent.$index, $index)" >
+                        <span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-9 col-md-offset-2">
+                    <button type="submit" class="btn btn-sm btn-success" ng-click="newVisitCtrl.Actions.AddTreatment($index)" >
+                        <span class="glyphicon glyphicon glyphicon-plus add-btn-icon" aria-hidden="true"></span>Dodaj nowe leczenie
+                    </button>
+                </div>
+            </div>
+            <hr/>
+
+            <div ng-repeat="treatment in newVisitCtrl.vm.diagnoses[$index].treatmentProducts">
+                <div class="row">
+                    <div class="form-group col-md-offset-2 col-md-6">
+                        <label for="treatment">{{$parent.$index+1}}.{{$index+1}}. Produkt</label>
+                        <angucomplete-alt id="treatmentProduct-{{$parent.$index}}-{{$index}}"
+                                          pause="100"
+                                          minlength="1"
+                                          selected-object="newVisitCtrl.OnTreatmentProductChange"
+                                          local-data="newVisitCtrl.Template.treatmentProducts"
+                                          title-field="name"
+                                          search-fields="name"
+                                          initial-value="newVisitCtrl.vm.diagnoses[$parent.$index].treatmentProducts[$index]"
+                                          input-class="form-control form-control-small"/>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="prize">Cena</label>
+                        <input type="number" name="prize" id="Text1" class="form-control" 
+                               ng-model="newVisitCtrl.vm.diagnoses[$parent.$index].treatmentProducts[$index].price" />
+                    </div>
+                    <div class="form-group col-md-1">
+                        <button class="btn btn-xs btn-danger remove-btn" ng-click="newVisitCtrl.Actions.RemoveTreatmentProduct($parent.$index, $index)" >
+                            <span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-9 col-md-offset-2">
+                    <button type="submit" class="btn btn-sm btn-success" ng-click="newVisitCtrl.Actions.AddTreatmentProduct($index)" >
+                        <span class="glyphicon glyphicon glyphicon-plus add-btn-icon" aria-hidden="true"></span>Dodaj nowy produkt
+                    </button>
+                </div>
+            </div>
+
+            <hr/>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-offset-9 col-md-2">
+                <button type="submit" class="btn btn-success" ng-click="newVisitCtrl.Actions.AddDiagnose()" >
+                    <span class="glyphicon glyphicon glyphicon-plus add-btn-icon" aria-hidden="true"></span>Dodaj nową diagnoze
+                </button>
+            </div>
+        </div>
+    </form>
+    <br>
+    <table class="table table-hover" ng-hide="!newVisitCtrl.visitRecords.length">
+        <thead>
+            <tr>
+                <th>Lp</th>
+                <th>Produkt</th>
+                <th>Cena</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="visitItem in newVisitCtrl.visitRecords">
+                <td>{{$index + 1}}</td>
+                <td>{{visitItem.description}}</td>
+                <td>{{visitItem.tooth.id}}</td>
+                <td>{{visitItem.treatmentProduct.name}}
+                </td>
+                <td>
+                    {{visitItem.price | number :2}}
+                </td>
+                <!-- <td>
+<button type="button" class="btn btn-danger btn-xs" aria-label="Left Align" ng-click="removeVisitItem($index)">
+<span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span>
+</button>
+</td>-->
+            </tr>
+        </tbody>
+    </table>
+    <hr/>
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label for="totalPrice">Cena całkowita</label>
+            <input type="number" name="totalPrice" id="Number2" class="form-control" ng-model="newVisitCtrl.vm.totalPrice" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-9">
+            <label for="treatment">Komentarz</label>
+            <textarea name="comment" id="Comment" class="form-control" ng-model="newVisitCtrl.vm.comment" />
+        </div> 
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="col-md-2">
+            <span class="btn btn-success btn-file">
+                Dodaj załącznik <input type="file" nv-file-select="" uploader="uploader" multiple>
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <br/>
+        <div class="col-md-9" style="margin-bottom: 40px" ng-hide="!uploader.queue.length">
+            <h3>Załączniki</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th width="50%">Nazwa</th>
+                        <th ng-show="uploader.isHTML5">Rozmiar</th>
+                        <th ng-show="uploader.isHTML5">Postęp</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in uploader.queue">
+                        <td><strong>{{ item.file.name }}</strong></td>
+                        <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                        <td ng-show="uploader.isHTML5">
+                            <div class="progress" style="margin-bottom: 0;">
+                                <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                            <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                            <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                        </td>
+                        <td nowrap>
+                            <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                                <span class="glyphicon glyphicon-ban-circle"></span> Anuluj
+                            </button>
+                            <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                                <span class="glyphicon glyphicon-trash"></span> Usuń
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div ng-show="newVisitCtrl.error" class="alert alert-danger">{{newVisitCtrl.error}}</div>
+    <div class="row">
+        <div class="form-actions col-md-4 col-md-offset-6">
+            <load-data loading="newVisitCtrl.saveLoading" error="newVisitCtrl.saveError"></load-data>            
+        </div>
+        <div class="form-actions col-md-1">
+            <button type="submit" ng-disabled="newVisitCtrl.dataLoading" class="btn btn-primary" ng-click="newVisitCtrl.save()">
+                <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Zapisz
+            </button>            
+        </div>
+    </div>
+</div>

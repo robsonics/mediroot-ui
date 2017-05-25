@@ -1,0 +1,77 @@
+<div ng-controller="CommunicationController">
+    <h2>Komunikacja</h2>
+    <div ng-show="dataLoading">
+        Trwa ładowanie danych
+    </div>
+    <div ng-hide="dataLoading">
+        <div ng-show="messageTypes.length">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label for="header">Typ wiadomości </label>
+                    <select ng-init="messageType=messageTypes[0]" ng-model="messageType" ng-options="item.id as item.name for item in ::messageTypes" />
+
+                </div>
+
+            </div>
+            <form name="form" role="form">
+
+                <div class="row" ng-show="messageType==1">
+                    <div class="form-group col-md-6">
+                        <label for="header">Nagłówek</label>
+                        <input type="text" name="header" id="header" class="form-control" ng-model="header" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="body">Treść</label>
+                        <textarea name="body" id="body" class="form-control" ng-model="body"  />
+                    </div>
+                </div>			    
+                <div class="row">
+                    <div class="col-md-1 col-md-offset-4">
+                        <button type="submit" ng-disabled="dataLoading" class="btn btn-success" ng-click="Send()">
+                            <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Wyślij
+                        </button>                       
+                        <img ng-if="dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" ng-disabled="dataLoading" class="btn btn-danger" ng-click="Clear()">
+                            Wyczyść
+                        </button>  
+                </div>
+                </div>
+                
+            </form>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="list-group">
+                        <div ng-repeat="message in messageList">
+                            <a ng-if="message.messagetype==0" class="list-group-item" ng-click="ShowMessageDetails(message.messageid)">
+                                <!--sms-->
+                                {{message.body}}
+                            </a>
+                            <a ng-if="message.messagetype==1" class="list-group-item" ng-click="ShowMessageDetails(message.messageid)">
+                                <!--email-->
+                                {{message.header}}<br>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-9">
+                    <div ng-if="message.messagetype==0" class="jumbotron">
+                        <!--sms-->
+                        {{message.body}}
+                    </div>
+                    <div ng-if="message.messagetype==1" class="jumbotron">
+                        <!--email-->
+                        {{message.header}}
+                    </div>
+                </div>
+            </div>                            
+        </div>
+        <!--in case when no phone or email-->
+        <div ng-hide="messageTypes.length">
+            <h2>Proszę uzupełnić dane pacjenta o numer telefonu lub adres email.</h2>
+        </div>
+    </div>
+</div>

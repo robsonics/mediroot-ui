@@ -17,7 +17,7 @@
                                 <div angucomplete-alt id="doctor"  pause="50"
                                      placeholder ="Szukaj lekarza" 
                                      selected-object="newDoctor" local-data="doctors" 
-                                     search-fields="name,description,id" title-field="name" 
+                                     search-fields="name,id" title-field="name" 
                                      description-field="description" minlength="1" input-class="form-control form-control-small" match-class="highlight">
                                 </div>
                                 
@@ -32,7 +32,7 @@
                                                   override-suggestions="true"
                                                   placeholder="Szukaj pacjenta"
                                                   selected-object="newPatient"
-                                                  remote-url="/patient/search/"
+                                                  remote-url="{{patientSearchUrl}}"
                                                   title-field="name"
                                                   description-field="pesel"
                                                   input-class="form-control form-control-small" />
@@ -43,7 +43,7 @@
                             </div>
                             <div class="form-group col-sm-3">
                                 <button type="submit" ng-disabled="valid" class="btn btn-success" ng-click="save()">
-                                    <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Wyślij
+                                    <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Zapisz
                                 </button>
                             </div>
                             </div>

@@ -1,0 +1,39 @@
+<div ng-controller="VisitHistoryController as visitHistoryCtrl">
+    <div ng-hide="visitHistoryCtrl.visitHistoryLoading">
+        <h2>Historia wizyt</h2>
+        <div >
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="list-group">
+                        <a ng-click="visitHistoryCtrl.selectVisit($index)" class="list-group-item" ng-repeat="visit in ::visitHistoryCtrl.visits">{{::visit.date | date : 'yyyy-MM-dd HH:mm'}}<br>
+                            {{::visit.doctorLastname}} {{::visit.doctorFirstname}}</a>
+                    </div>
+                </div>
+                <div class="col-sm-9">
+                    <div class="jumbotron" ng-hide="visitHistoryCtrl.currentVisit">
+                        <b>Brak wizyt.</b>
+                    </div>
+                    <div class="jumbotron" ng-show="visitHistoryCtrl.currentVisit">
+                        Doktor: <b>{{visitHistoryCtrl.currentVisit.doctorLastname}} {{visitHistoryCtrl.currentVisit.doctorFirstname}}</b><br>
+                        Data: <b>{{visitHistoryCtrl.currentVisit.date | date : 'yyyy-MM-dd HH:mm'}}</b><br>
+                        Płatnik: <b>{{visitHistoryCtrl.transformPayer(visitHistoryCtrl.currentVisit.visitPayer)}}</b>
+
+                        <teeth-Graph readonly="visitHistoryCtrl.isReadonly" state="visitHistoryCtrl.state" width="1050"></teeth-Graph>
+
+                        <div ng-repeat="diagnoses in visitHistoryCtrl.currentVisit.diagnoses">
+                            {{$index + 1}}. {{diagnoses.description}} dotyczy {{diagnoses.tooth}}
+                            <div ng-repeat="treatment in diagnoses.treatment">
+                                {{$parent.$index+1}}.{{$index+1}}. {{treatment}} 			
+                            </div>  
+                        </div>
+                        Komentarz: <b>{{visitHistoryCtrl.currentVisit.comment}}</b><br>
+                        Całowita cena: <b>{{visitHistoryCtrl.currentVisit.totalPrice | number :2}}</b><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-show="visitHistoryCtrl.visitHistoryLoading">
+        <h2>Trwa ładowania historii wizyt...</h2>
+    </div>
+</div>

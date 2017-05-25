@@ -1,0 +1,36 @@
+<div ng-hide="surveyResponsesLoading">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <h2 class="text-center">Historia chorób</h2>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-primary btn-xs" aria-label="Left Align" ng-click="createSurvey(patientId)">
+                                <span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <hr />
+                    <div ng-repeat="survey in ::responsecollection">
+                        <pre>
+                            Data: <b>{{::survey.date | date : 'yyyy-MM-dd HH:mm'}}</b><hr>
+                            Ankieter: <b>{{::survey.systemuserlastname}} {{::survey.systemuserfirstname}}</b>
+                            <br><br/>
+                            <table class="table">
+                                <tbody>
+                                    <tr ng-repeat="item in ::survey.responses " >
+                                        <td ng-class="{'danger': !item.isDefault && item.priority==1, 'hover': !item.isDefault && item.priority==2,'info': !item.isDefault && item.priority==3}">{{$index + 1}}</td>
+                                        <td ng-class="{'danger': !item.isDefault && item.priority==1, 'hover': !item.isDefault && item.priority==2,'info': !item.isDefault && item.priority==3}">{{::item.query}}</td>
+                                        <td ng-class="{'danger': !item.isDefault && item.priority==1, 'hover': !item.isDefault && item.priority==2,'info': !item.isDefault && item.priority==3}"><b>{{::item.response}}</b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="surveyResponsesLoading">
+                <h2>Trwa ładowania historii chorób</h2>
+            </div>

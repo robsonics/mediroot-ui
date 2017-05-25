@@ -1,4 +1,9 @@
 <div class="container">
+    <style>
+        .bold-span{
+            font-weight: bold;
+        }
+    </style>
     <div>
         <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="back()" popover-placement="bottom" popover="Cofnij" popover-trigger="mouseenter">
             <span class="glyphicon glyphicon glyphicon-backward" aria-hidden="true"></span>
@@ -26,8 +31,7 @@
             <div class="row">
                 <div class="form-group col-md-4" ng-class="{'has-error':form.PESEL.$invalid && form.PESEL.$dirty }">
                     <label for="PESEL">PESEL</label>
-                    <input type="text" name="PESEL" id="PESEL" class="form-control" ng-model="PESEL" required ng-pattern="/^[0-9]{11}$/" style="text-transform: uppercase" ng-change="peselChange()" />
-                    <span ng-show="form.PESEL.$error.required" class="help-block">PESEL jest wymagany</span>
+                    <input type="text" name="PESEL" id="PESEL" class="form-control" ng-model="PESEL" ng-pattern="/^[0-9]{11}$/" style="text-transform: uppercase" ng-change="peselChange()" />
                     <span ng-show="form.PESEL.$dirty && form.PESEL.$error.pattern" class="help-block">PESEL musi mieć 11 znaków</span>
                 </div>
                 <div class="col-md-3">
@@ -49,33 +53,57 @@
                     <span ng-show="form.adress.$error.required" class="help-block">Adres jest wymagany</span>
                 </div>
                 <div class="form-group col-md-4" ng-class="{'has-error':form.country.$invalid && form.country.$dirty}">
-                    <label for="country">Kraj</label>
-                    <angucomplete-alt id="country"
-                        pause="200"
-                        minlength="2"
-                        selected-object="OnCountryChange"
-                        remote-url="/patient/country/"
-                        required
-                        title-field="name"
-                        input-class="form-control form-control-small" />
-                    <!-- <input type="text" name="country" id="Text3" class="form-control" ng-model="country" required -->
-                    style="text-transform: uppercase" />
-                    <span ng-show="form.country.$error.required" class="help-block">Kraj jest wymagany</span>
+                    <load-data loading="countryLoading" error="countryError">
+                        <label for="country">Kraj</label>
+                        <angucomplete-alt id="country"
+                                          selected-object="OnCountryChange"
+                                          local-data="countryList"
+                                          required
+                                          search-fields="name"
+                                          title-field="name"
+                                          minlength="1"
+                                          input-class="form-control form-control-small"
+                                          match-class="highlight"
+                                          override-suggestions="true"/>
+                    </load-data>                     
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-md-6" ng-class="{'has-error':form.city.$invalid && form.city.$dirty }">
-                    <label for="city">Miasto</label>
-                    <input type="text" name="city" id="city" class="form-control" ng-model="city" required ng-minlength="2" style="text-transform: uppercase" />
-                    <span ng-show="form.city.$error.required" class="help-block">Miasto jest wymagany</span>
-                    <span ng-show="form.city.$error.minlength" class="help-block">Miasto musi mieć przynajmniej 2 znaki</span>
-
+                    <load-data loading="cityPostalLoading" error="cityPostalError">
+                        <label for="city">Miasto</label>
+                        <angucomplete-alt id="city"
+                                          selected-object="OnCityChange"
+                                          local-data="cityPostal"
+                                          required
+                                          search-fields="city,postal"
+                                          description-field="postal"
+                                          title-field="city"
+                                          minlength="1"
+                                          input-class="form-control form-control-small"
+                                          match-class="highlight"
+                                          override-suggestions="true"/>
+                        <span ng-show="form.city.$error.required" class="help-block">Miasto jest wymagany</span>
+                        <span ng-show="form.city.$error.minlength" class="help-block">Miasto musi mieć przynajmniej 2 znaki</span>
+                    </load-data>  
                 </div>
                 <div class="form-group col-md-4" ng-class="{'has-error':form.postal.$invalid && form.postal.$dirty }">
-                    <label for="postal">Kod pocztowy</label>
-                    <input type="text" name="postal" id="postal" class="form-control" ng-model="postal" required ng-pattern="/^[0-9]{2}-[0-9]{3}$/" />
-                    <span ng-show="form.postal.$error.required" class="help-block">Kod pocztowy jest wymagany</span>
-                    <span ng-show="form.postal.$dirty && form.postal.$error.pattern" class="help-block">Kod pocztowy powinnien być w formacie XX-XXX</span>
+                    <load-data loading="cityPostalLoading" error="cityPostalError">
+                        <label for="postal">Kod pocztowy</label>
+                        <angucomplete-alt id="postal"
+                                          selected-object="OnPostalChange"
+                                          local-data="cityPostal"
+                                          required
+                                          search-fields="city,postal"
+                                          title-field="postal"
+                                          description-field="city"
+                                          minlength="1"
+                                          input-class="form-control form-control-small"
+                                          match-class="highlight"
+                                          override-suggestions="true"/>
+                        <span ng-show="form.postal.$error.required" class="help-block">Kod pocztowy jest wymagany</span>
+                        <span ng-show="form.postal.$dirty && form.postal.$error.pattern" class="help-block">Kod pocztowy powinnien być w formacie XX-XXX</span>
+                    </load-data>  
                 </div>
             </div>
             <div class="row">
@@ -90,15 +118,6 @@
             </div>
 
             <div class="row">
-                <!--  <div ng-show="form.$invalid" class="alert alert-danger">
-                    <ul>
-                        <li ng-repeat="(key, errors) in form.$error track by $index"><strong>{{key}}</strong> errors </li>
-                        <ul>
-                            <li ng-repeate="e in errors">Pole: {{e.$name}} ma błąd: <strong>{{key}}</strong></li>
-                        </ul>
-                    </ul>
-                </div>-->
-
                 <div class="col-md-1 col-md-offset-8">
                     <button type="submit" ng-disabled="dataLoading" class="btn btn-primary">
                         <span class="glyphicon glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>Zapisz

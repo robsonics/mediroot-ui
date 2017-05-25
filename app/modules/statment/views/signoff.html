@@ -1,0 +1,42 @@
+﻿<h2>Podpisanie oświadczenia</h2>
+<br>
+<style>
+    .statment {
+        width: 60%;
+        align-self: center;
+        margin: auto;
+        border-color: black;
+        border-width: 1px;
+        border-style: solid;
+        padding: 28px;
+        border-bottom-style: none;
+    }
+
+    .statment-bottom {
+        width: 60%;
+        align-self: center;
+        margin: auto;
+        border-color: black;
+        border-width: 1px;
+        border-style: solid;
+        padding: 28px;
+        border-top-style: none;
+    }
+
+    .buttons-bottom {
+        width: 60%;
+        align-self: center;
+        margin: auto;
+        padding-top: 10px; 
+    }
+</style>
+<div ng-bind-html="statment" class="statment"></div>
+<div class="statment-bottom">
+    <signature-pad accept="accept" clear="clear" height="220" width="568" dataurl="dataurl"></signature-pad>
+</div>
+
+<div class="buttons-bottom">
+    <button class="btn btn-danger" ng-click="clear()">Wyczyść</button>
+    <button class="btn btn-danger" ng-click="dataurl = signature.dataUrl" ng-disabled="!signature">Reset</button>
+    <button class="btn btn-success" ng-click="post()">Akceptuj</button>
+</div>

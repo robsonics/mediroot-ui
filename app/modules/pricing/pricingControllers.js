@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient'])
-.factory('PricingAPI', ['$http','ApiAdress', function($http) {
+angular.module('Pricing', ['ngDialog', 'ui.bootstrap', 'Patient', 'Common'])
+.factory('PricingAPI', ['$http','ApiAdress', function($http, ApiAdress) {
     return {
       countAllPricingItems: function() {
           return $http.get(ApiAdress + '/treatment/product/all/count');

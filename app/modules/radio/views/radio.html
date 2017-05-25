@@ -1,0 +1,85 @@
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <div ng-include="'menu.html'" />
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+
+                <h1 class="page-header">Mediroot Radio</h1>
+                <tabset>
+                    <tab heading="Radio">
+                        <div ng-show="error" class="alert alert-danger">{{error}}</div>
+
+                        <div class="row">
+                            <button  class="btn btn-primary btn-danger" ng-click="stop()" ng-enable="!dataLoading"><span class="glyphicon glyphicon-stop"></span>Stop</button>
+                        </div>
+                        <p>
+                            <br><input type="text" ng-model="nameFilter" placeholder="Szukaj..." />
+                        </p>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr ng-repeat="radio in radioList | filter: nameFilter">
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{radio.name}}</td>
+                                    <td>{{radio.comment}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-xs" aria-label="Left Align"  ng-click="play(radio.id)">
+                                            <span class="glyphicon glyphicon-play"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </tab>
+                    <tab heading="Playlista">
+                        <button class="btn btn-primary btn-primary" ng-click="playPlaylist()" ng-enable="!dataLoading"><span class="glyphicon glyphicon-play"></span> Play Playlist</button>
+                        
+                        <button  class="btn btn-primary btn-danger" ng-click="stop()" ng-enable="!dataLoading"><span class="glyphicon glyphicon-stop"></span>Stop</button>
+                        
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Lp</th>
+                                    <th>Tytul</th>
+                                    <th>Obecny</th>
+                                    <th>Akcja</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="track in tracks">
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{track.name}}</td>
+                                    
+                                    <td><span ng-if="track.present" class="glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        <span ng-if="!track.present" class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                    </td>
+                                    <td><div ng-if="track.present">
+                                            <button type="button" class="btn btn-danger btn-xs" aria-label="Left Align" ng-click="removePlaylist(track.name)">
+                                            <span class="glyphicon glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                        </button>
+                                        </div>
+                                        <div ng-if="!track.present">
+                                            <button type="button" class="btn btn-danger btn-xs" aria-label="Left Align" ng-click="addPlaylist(track.name)">
+                                                <span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </tab>
+                 </tabset>
+
+            </div>
+
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+<!-- /#page-wrapper -->

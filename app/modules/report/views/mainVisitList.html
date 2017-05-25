@@ -1,0 +1,59 @@
+﻿<div id="wrapper">
+
+    <!-- Navigation -->
+    <div ng-include="'menu.html'" />
+
+    <!-- Page Content -->
+    <div id="page-wrapper" ng-controller="MainVisitListController as mvCntrl">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md4">
+                    <label>Płatnik wizyty:</label>
+                    <label ng-repeat="payer in mvCntrl.payerList">
+                        <input
+                            type="checkbox"
+                            name="selectedPayers[]"
+                            value="{{payer.id}}"
+                            ng-click="mvCntrl.togglePayerSelection(payer.id)">
+                        {{::payer.name}}<br />
+                    </label>
+                    <!--ng-checked="selection.indexOf(fruitName) > -1"-->
+
+                </div>
+                <div class="col-md-4">Od:</div>
+                <div class="col-md-4">Do:</div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-10 col-md-2">
+                    <button ng-click="mvCntrl.show()" ng-disabled="mvCntrl.dataLoading">Pokaż</button>
+                </div>
+            </div>
+            <div class="row">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Lp </th>
+                            <th>Data</th>
+                            <th>Godzina</th>
+                            <th>Nazwisko Imię</th>
+                            <th>Telefon</th>
+                            <th>Adres</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in mvCntrl.data">
+                            <td>{{$index + 1}}</td>
+                            <td>{{$index + 1}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+<!-- /#page-wrapper -->
+
